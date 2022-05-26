@@ -6,14 +6,20 @@
       dark
     >
       <div class="d-flex align-center">
-        <v-btn class="text-h4 font-weight-bold text-none" text href="/kondo_projects/">Kondo</v-btn><span class="text-h7">Create New Project</span>
+        <v-btn
+          class="text-h4 font-weight-bold text-none"
+          text
+          href="/kondo_projects/"
+        >
+          Kondo
+        </v-btn><span class="text-h7">Create New Project</span>
       </div>
-      <v-spacer></v-spacer>
+      <v-spacer />
 
       
 
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -32,7 +38,7 @@
         <span>Project List</span>
       </v-tooltip>
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             
             class="mx-1"
@@ -42,8 +48,8 @@
             href="/kondo_create"
             color="#483682 accent"
             v-bind="attrs"
-            v-on="on"
             disabled
+            v-on="on"
           >
             <v-icon>
               mdi-plus
@@ -53,7 +59,7 @@
         <span>Create New Project</span>
       </v-tooltip>
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -72,7 +78,7 @@
         <span>Download Reports</span>
       </v-tooltip>
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -93,7 +99,7 @@
     </v-app-bar>
 
     <v-main>
-      <CreateForm/>
+      <CreateForm />
     </v-main>
   </v-app>
 </template>

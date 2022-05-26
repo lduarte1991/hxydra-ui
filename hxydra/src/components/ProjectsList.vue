@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <v-snackbar
       v-model="errorBox"
       top
@@ -8,7 +7,7 @@
       color="error"
     >
       {{ errorMessage }}
-      <template v-slot:action="{ attrs }">
+      <template #action="{ attrs }">
         <v-btn
           color="white"
           text
@@ -26,7 +25,10 @@
       persistent
     >
       <v-card>
-        <EditForm :course="selected" @closeEdit="closeEdit"/>
+        <EditForm
+          :course="selected"
+          @closeEdit="closeEdit"
+        />
       </v-card>
     </v-dialog>
     <v-dialog
@@ -43,56 +45,58 @@
             class="ma-2"
             @click="detail = false"
           >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-spacer/>
-        <v-btn
-          v-if="write_perm"
-          class="mr-3"
-          @click="createNewSequence(rowItem)"
-        >
-          New Sequence
-        </v-btn>
-        <v-btn
-          v-if="write_perm"
-          class="mr-3"
-          @click="createNewVersion(rowItem)"
-        >
-          New Version
-        </v-btn>
-        <v-btn
-          v-if="write_perm"
-          class="mr-3"
-          @click="createNewRerun(rowItem)"
-        >
-          New Run
-        </v-btn>
-        <v-btn
-          v-if="write_perm"
-          @click="deleteItem(rowItem)"
-        >
-          <v-icon
-            small
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-spacer />
+          <v-btn
+            v-if="write_perm"
+            class="mr-3"
+            @click="createNewSequence(rowItem)"
           >
-            mdi-delete
-          </v-icon>
-        </v-btn>
+            New Sequence
+          </v-btn>
+          <v-btn
+            v-if="write_perm"
+            class="mr-3"
+            @click="createNewVersion(rowItem)"
+          >
+            New Version
+          </v-btn>
+          <v-btn
+            v-if="write_perm"
+            class="mr-3"
+            @click="createNewRerun(rowItem)"
+          >
+            New Run
+          </v-btn>
+          <v-btn
+            v-if="write_perm"
+            @click="deleteItem(rowItem)"
+          >
+            <v-icon
+              small
+            >
+              mdi-delete
+            </v-icon>
+          </v-btn>
         </v-toolbar>
-        <DetailView :course="selected"/>
+        <DetailView :course="selected" />
       </v-card>
     </v-dialog>
     <v-card
+      v-if="newProject"
       shaped
       dark
       class="mb-5 success"
-      v-if="newProject"
       style="position: sticky; top: 70px; z-index:99999"
     >
-    <v-card-title>
-      New Project '{{newProject.title}}' was added. &nbsp; <a @click="search=newProject.nickname">View it here</a>
-      <v-spacer></v-spacer>
-      <v-btn @click="newProject=undefined">Close</v-btn>
-    </v-card-title>
+      <v-card-title>
+        New Project '{{ newProject.title }}' was added. &nbsp; <a @click="search=newProject.nickname">View it here</a>
+        <v-spacer />
+        <v-btn @click="newProject=undefined">
+          Close
+        </v-btn>
+      </v-card-title>
     </v-card>
     <v-card>
       <v-card-title>
@@ -113,33 +117,36 @@
         }
         "
       >
-        <template v-slot:top>
+        <template #top>
           <v-text-field
             v-model="search"
             label="Search"
             class="mx-4"
             prepend-inner-icon="mdi-magnify"
             outlined
-          ></v-text-field>
+          />
         </template>
-        <template v-slot:item="{ item }">
+        <template #item="{ item }">
           <tr>
             <td>
-              {{item['nickname']}}
+              {{ item['nickname'] }}
             </td>
             <td>
-              {{item['title']}}
+              {{ item['title'] }}
             </td>
             <td>
-                {{ launchDateDisplay(item) }}
+              {{ launchDateDisplay(item) }}
             </td>
             <td>
-                {{ endDateDisplay(item) }}
+              {{ endDateDisplay(item) }}
             </td>
             <td>
               <v-container>
                 <v-row>
-                  <v-col v-if="write_perm" class="col-6">
+                  <v-col
+                    v-if="write_perm"
+                    class="col-6"
+                  >
                     <v-icon
                       small
                       class="mr-2"
@@ -280,6 +287,9 @@
       api_copy_project_url: process.env.VUE_APP_KONDO_API_URL + 'copy/',
       projects: [],
     }),
+    mounted() {
+      this.getProjects();
+    },
     methods: {
       filter (value, search) {
         if (value && search) {
@@ -502,9 +512,6 @@
         }
         return res
       },
-    },
-    mounted() {
-      this.getProjects();
     }
   }
 </script>

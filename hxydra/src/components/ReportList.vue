@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <v-snackbar
       v-model="errorBox"
       top
@@ -8,7 +7,7 @@
       color="error"
     >
       {{ errorMessage }}
-      <template v-slot:action="{ attrs }">
+      <template #action="{ attrs }">
         <v-btn
           color="white"
           text
@@ -27,7 +26,7 @@
       elevation="24"
     >
       {{ progressMessage }}
-      <template v-slot:action="{ attrs }">
+      <template #action="{ attrs }">
         <v-btn
           color="white"
           text
@@ -41,13 +40,16 @@
         color="white"
         :buffer-value="progressValue"
         stream
-      ></v-progress-linear>
+      />
     </v-snackbar>
     <v-card
       elevation="0"
     >
       <v-card-title>
-        Report List <v-spacer /> <v-switch :label="cachedLabel" v-model="freshest"></v-switch>
+        Report List <v-spacer /> <v-switch
+          v-model="freshest"
+          :label="cachedLabel"
+        />
       </v-card-title>
       <v-card-text>If links don't download when clicking: Right click + Download/Save As<br>Cached Version is faster, but may be outdated. Latest version may take a few minutes.</v-card-text>
       <v-container>
@@ -59,7 +61,7 @@
             cols="12"
             sm="4"
           >
-            <h3>{{item.description}}</h3>
+            <h3>{{ item.description }}</h3>
           </v-col>
           <v-col
             cols="4"
@@ -68,8 +70,15 @@
           >
             <v-btn
               @click="downloadUrl(api_domain + item.url + '?format=csv&freshest=' + freshest, item.description + '.csv')"
-            ><v-icon>mdi-download</v-icon> CSV</v-btn>
-            <p class="text-caption" v-if="item.last_updated && !freshest">Last Updated:<br> {{new Date(item.last_updated.csv).toLocaleString()}}</p>
+            >
+              <v-icon>mdi-download</v-icon> CSV
+            </v-btn>
+            <p
+              v-if="item.last_updated && !freshest"
+              class="text-caption"
+            >
+              Last Updated:<br> {{ new Date(item.last_updated.csv).toLocaleString() }}
+            </p>
           </v-col>
           <v-col
             cols="4"
@@ -78,8 +87,15 @@
           >
             <v-btn
               @click="downloadUrl(api_domain + item.url + '?format=json&freshest=' + freshest, item.description + '.json')"
-            ><v-icon>mdi-download</v-icon> JSON</v-btn>
-            <p class="text-caption" v-if="item.last_updated && !freshest">Last Updated:<br> {{new Date(item.last_updated.json).toLocaleString()}}</p>
+            >
+              <v-icon>mdi-download</v-icon> JSON
+            </v-btn>
+            <p
+              v-if="item.last_updated && !freshest"
+              class="text-caption"
+            >
+              Last Updated:<br> {{ new Date(item.last_updated.json).toLocaleString() }}
+            </p>
           </v-col>
           <v-col
             cols="4"
@@ -88,7 +104,11 @@
           >
             <v-btn
               :href="'/kondo_reportview/?url=' + item.url + '&title=' + item.description + '&freshest=' + freshest"
-            ><v-icon class="mr-2">mdi-eye</v-icon> View</v-btn>
+            >
+              <v-icon class="mr-2">
+                mdi-eye
+              </v-icon> View
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -135,23 +155,6 @@
   </v-container>
 </template>
 
-<style>
-  .spin {
-    animation-name: spin;
-    animation-duration: 1000ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-  }
-  @keyframes spin {
-    from {
-      transform:rotate(0deg);
-    }
-    to {
-      transform:rotate(360deg);
-    }
-  }
-</style>
-
 <script>
   import axios from 'axios'
   export default {
@@ -185,6 +188,14 @@
         link: 'https://google.com'
       }]
     }),
+    computed: {
+      cachedLabel() {
+        return this.freshest ? 'Requesting Latest Version' : 'Requesting Cached Version'
+      }
+    },
+    mounted() {
+      this.getReports();
+    },
     methods: {
       async getReports () {
         const self = this
@@ -294,14 +305,23 @@
         }
         return false
       }
-    },
-    computed: {
-      cachedLabel() {
-        return this.freshest ? 'Requesting Latest Version' : 'Requesting Cached Version'
-      }
-    },
-    mounted() {
-      this.getReports();
     }
   }
 </script>
+
+<style>
+  .spin {
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  @keyframes spin {
+    from {
+      transform:rotate(0deg);
+    }
+    to {
+      transform:rotate(360deg);
+    }
+  }
+</style>

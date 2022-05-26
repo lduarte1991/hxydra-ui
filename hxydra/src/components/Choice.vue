@@ -7,7 +7,7 @@
       color="error"
     >
       {{ errorMessage }}
-      <template v-slot:action="{ attrs }">
+      <template #action="{ attrs }">
         <v-btn
           color="white"
           text
@@ -19,19 +19,45 @@
       </template>
     </v-snackbar>
     <v-expansion-panels>
-      <v-expansion-panel v-for="item in setup_options" v-bind:key="item.tech_name">
+      <v-expansion-panel
+        v-for="item in setup_options"
+        :key="item.tech_name"
+      >
         <v-expansion-panel-header>
-          {{item.proper_name}} <v-spacer/><v-btn @click.stop="" :title="'Add new' + item.proper_name" max-width="30px" @click="add = !add; choiceSelected = item.tech_name" class="mr-10"><v-icon>mdi-plus</v-icon></v-btn>
+          {{ item.proper_name }} <v-spacer /><v-btn
+            :title="'Add new' + item.proper_name"
+            max-width="30px"
+            class="mr-10"
+            @click.stop=""
+            @click="add = !add; choiceSelected = item.tech_name"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-list-item v-for="e in values[item.tech_name]" v-bind:key="e.value">
+          <v-list-item
+            v-for="e in values[item.tech_name]"
+            :key="e.value"
+          >
             <v-list-item-content>
               <v-list-item-title>
-                <v-btn title="Edit" @click="
-                awaitingEdit = e; choiceSelected = item.tech_name; editChoice()" class="" icon small>
-                    <v-icon>mdi-pencil</v-icon>
+                <v-btn
+                  title="Edit"
+                  class=""
+                  icon
+                  small
+                  @click="
+                    awaitingEdit = e; choiceSelected = item.tech_name; editChoice()"
+                >
+                  <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn title="Delete" @click="awaitingDelete = e; choiceSelected = item.tech_name; deleteChoice()" class="mr-5" icon small>
+                <v-btn
+                  title="Delete"
+                  class="mr-5"
+                  icon
+                  small
+                  @click="awaitingDelete = e; choiceSelected = item.tech_name; deleteChoice()"
+                >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
                 {{ e.value }} <span v-if="'par' in e">({{ e.par }})</span>
@@ -41,11 +67,19 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-divider class="mt-10 mb-10"></v-divider>
+    <v-divider class="mt-10 mb-10" />
     <v-expansion-panels>
       <v-expansion-panel>
         <v-expansion-panel-header>
-          People <v-spacer/><v-btn @click.stop="" title="Add new" max-width="30px" @click="addPeople = true;" class="mr-10"><v-icon>mdi-plus</v-icon></v-btn>
+          People <v-spacer /><v-btn
+            title="Add new"
+            max-width="30px"
+            class="mr-10"
+            @click.stop=""
+            @click="addPeople = true;"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-data-table
@@ -62,56 +96,62 @@
             }
             "
           >
-          <template v-slot:top>
-            <v-text-field
-              v-model="search"
-              label="Search"
-              class="mx-4"
-            ></v-text-field>
-          </template>
-          <template v-slot:item="{ item }">
-            <tr>
-              <td>
-                {{item['first_name']}}
-              </td>
-              <td>
-                {{item['last_name']}}
-              </td>
-              <td>
-                <div v-for="e in item.email" v-bind:key="e">
-                  <a :href="'mailto:' + e">{{e}}</a>
-                </div>
-              </td>
-              <td>
-                <div v-for="a in item.affiliation" v-bind:key="a">
-                  {{a}}
-                </div>
-              </td>
-              <td>
-                <v-container>
-                  <v-row>
-                    <v-col class="col-4">
-                      <v-icon
-                        small
-                        class="mr-2"
-                        @click="editPerson(item)"
-                      >
-                        mdi-pencil
-                      </v-icon>
-                    </v-col>
-                    <v-col class="col-4">
-                      <v-icon
-                        small
-                        @click="deletePerson(item)"
-                      >
-                        mdi-delete
-                      </v-icon>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </td>
-            </tr>
-          </template>
+            <template #top>
+              <v-text-field
+                v-model="search"
+                label="Search"
+                class="mx-4"
+              />
+            </template>
+            <template #item="{ item }">
+              <tr>
+                <td>
+                  {{ item['first_name'] }}
+                </td>
+                <td>
+                  {{ item['last_name'] }}
+                </td>
+                <td>
+                  <div
+                    v-for="e in item.email"
+                    :key="e"
+                  >
+                    <a :href="'mailto:' + e">{{ e }}</a>
+                  </div>
+                </td>
+                <td>
+                  <div
+                    v-for="a in item.affiliation"
+                    :key="a"
+                  >
+                    {{ a }}
+                  </div>
+                </td>
+                <td>
+                  <v-container>
+                    <v-row>
+                      <v-col class="col-4">
+                        <v-icon
+                          small
+                          class="mr-2"
+                          @click="editPerson(item)"
+                        >
+                          mdi-pencil
+                        </v-icon>
+                      </v-col>
+                      <v-col class="col-4">
+                        <v-icon
+                          small
+                          @click="deletePerson(item)"
+                        >
+                          mdi-delete
+                        </v-icon>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </td>
+              </tr>
+            </template>
           </v-data-table>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -126,15 +166,33 @@
           <v-text-field
             v-model="newChoice"
             :label="(isEditingChoice ? 'Update ' : 'Add New ') + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_name : 'Choice')"
-          ></v-text-field>
+          />
           <v-text-field
             v-if="(choiceSelected ? 'par' in setup_options.filter(e => e.tech_name == choiceSelected)[0] : false)"
             v-model="newPar"
-            :label="(isEditingChoice ? 'Update ' : 'Add New ')  + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_par_name : 'Description')"
-          ></v-text-field>
-          <v-btn v-if="!isEditingChoice" color="#483682" dark class="mr-5" @click="addChoicePopup()">Add</v-btn>
-          <v-btn v-if="isEditingChoice" color="#483682" dark class="mr-5" @click="updateChoicePopup()">Update</v-btn>
-          <v-btn @click="add = false; isEditingChoice = false">Cancel</v-btn>
+            :label="(isEditingChoice ? 'Update ' : 'Add New ') + (choiceSelected ? setup_options.filter(e => e.tech_name == choiceSelected)[0].proper_par_name : 'Description')"
+          />
+          <v-btn
+            v-if="!isEditingChoice"
+            color="#483682"
+            dark
+            class="mr-5"
+            @click="addChoicePopup()"
+          >
+            Add
+          </v-btn>
+          <v-btn
+            v-if="isEditingChoice"
+            color="#483682"
+            dark
+            class="mr-5"
+            @click="updateChoicePopup()"
+          >
+            Update
+          </v-btn>
+          <v-btn @click="add = false; isEditingChoice = false">
+            Cancel
+          </v-btn>
         </v-container>
       </v-card>
     </v-dialog>
@@ -146,29 +204,29 @@
       <v-card class="px-10">
         <v-container>
           <v-text-field
-            class="mx-10"
             v-model="newFirstName"
+            class="mx-10"
             placeholder="First Name"
-          ></v-text-field>
+          />
           <v-text-field
-            class="mx-10"
             v-model="newLastName"
+            class="mx-10"
             placeholder="Last Name"
-          ></v-text-field>
+          />
           <v-text-field
-            class="mx-10"
             v-model="newEmail"
-            placeholder="Email"
-          ></v-text-field>
-          <v-text-field
             class="mx-10"
+            placeholder="Email"
+          />
+          <v-text-field
             v-model="newAffiliation"
+            class="mx-10"
             placeholder="Affiliation(s)"
             :rules="schoolCheck"
-          ></v-text-field>
+          />
           <v-btn
-            color="#483682"
             v-if="isEditingPerson"
+            color="#483682"
             dark
             class="mr-5"
             @click="editMode = true; updatePerson()"
@@ -176,15 +234,17 @@
             Update
           </v-btn>
           <v-btn
-            color="#483682"
             v-if="!isEditingPerson"
+            color="#483682"
             dark
             class="mr-5"
             @click="editMode = false; addNewPerson()"
           >
             Update
           </v-btn>
-          <v-btn @click="addPeople = false">Cancel</v-btn>
+          <v-btn @click="addPeople = false">
+            Cancel
+          </v-btn>
         </v-container>
       </v-card>
     </v-dialog>
@@ -247,9 +307,14 @@
 <script>
   import axios from 'axios'
   export default {
-    name: 'Choice',
+    name: 'KondoChoice',
     props: {
-      choiceType: Object
+      choiceType: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
     },
     data: () => ({
       add: false,
@@ -349,6 +414,39 @@
         'key': 'name'
       }]
     }),
+    computed: {
+      values() {
+        let newValues = {}
+        for (const s of this.setup_options) {
+          newValues[s['tech_name']] = this[s['tech_name']]
+        }
+        return newValues
+      },
+      schoolCheck () {
+        const rules = []
+        const checkSchool = school_str => {
+          let schools = this.school
+          let allFound = true
+          let school_list = typeof(school_str) == "string" ? school_str.split(',') : []
+          school_list.forEach(s => {
+            let found = false
+            schools.forEach(sch => {
+              console.log(sch)
+              if (s.trim() == sch.value) {found = true}
+            })
+            if (!found) {allFound = false}
+          })
+          return allFound
+        }
+        const schoolVerify = v => !v || (checkSchool(v) && v.indexOf(' ') == -1) || 'Affiliation(s) must be a valid school acronym, i.e. HBS,HKS (No spaces allowed)'
+        rules.push(schoolVerify)
+        return rules
+      },
+    },
+    mounted() {
+      this.getChoices()
+      this.getPeople()
+    },
     methods: {
       getChoices () {
         if (!axios) {
@@ -602,39 +700,6 @@
           search != null &&
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
-      },
-    },
-    mounted() {
-      this.getChoices()
-      this.getPeople()
-    },
-    computed: {
-      values() {
-        let newValues = {}
-        for (const s of this.setup_options) {
-          newValues[s['tech_name']] = this[s['tech_name']]
-        }
-        return newValues
-      },
-      schoolCheck () {
-        const rules = []
-        const checkSchool = school_str => {
-          let schools = this.school
-          let allFound = true
-          let school_list = typeof(school_str) == "string" ? school_str.split(',') : []
-          school_list.forEach(s => {
-            let found = false
-            schools.forEach(sch => {
-              console.log(sch)
-              if (s.trim() == sch.value) {found = true}
-            })
-            if (!found) {allFound = false}
-          })
-          return allFound
-        }
-        const schoolVerify = v => !v || (checkSchool(v) && v.indexOf(' ') == -1) || 'Affiliation(s) must be a valid school acronym, i.e. HBS,HKS (No spaces allowed)'
-        rules.push(schoolVerify)
-        return rules
       },
     }
   }

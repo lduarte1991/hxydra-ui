@@ -6,13 +6,19 @@
       dark
     >
       <div class="d-flex align-center">
-        <v-btn class="text-h4 font-weight-bold text-none" text href="/kondo_projects/">Kondo</v-btn><span class="text-h7">Configure Lists</span>
+        <v-btn
+          class="text-h4 font-weight-bold text-none"
+          text
+          href="/kondo_projects/"
+        >
+          Kondo
+        </v-btn><span class="text-h7">Configure Lists</span>
       </div>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -30,8 +36,11 @@
         </template>
         <span>Project List</span>
       </v-tooltip>
-      <v-tooltip bottom v-if="write_perm">
-        <template v-slot:activator="{on, attrs}">
+      <v-tooltip
+        v-if="write_perm"
+        bottom
+      >
+        <template #activator="{on, attrs}">
           <v-btn
             
             class="mx-1"
@@ -51,7 +60,7 @@
         <span>Create New Project</span>
       </v-tooltip>
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -70,7 +79,7 @@
         <span>Download Reports</span>
       </v-tooltip>
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -79,8 +88,8 @@
             href="/kondo_choice/"
             color="#483682 accent"
             v-bind="attrs"
-            v-on="on"
             disabled
+            v-on="on"
           >
             <v-icon>
               mdi-cog
@@ -92,13 +101,13 @@
     </v-app-bar>
 
     <v-main>
-      <Choice/>
+      <KondoChoice />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Choice from '../../components/Choice';
+import KondoChoice from '../../components/Choice';
 let perms = false
 try {
   const cookie = document.cookie
@@ -116,7 +125,7 @@ export default {
   name: 'App',
 
   components: {
-    Choice,
+    KondoChoice,
   },
 
   data: () => ({

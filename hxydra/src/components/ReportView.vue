@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <v-snackbar
       v-model="errorBox"
       top
@@ -8,7 +7,7 @@
       color="error"
     >
       {{ errorMessage }}
-      <template v-slot:action="{ attrs }">
+      <template #action="{ attrs }">
         <v-btn
           color="white"
           text
@@ -26,58 +25,50 @@
       <v-card-title class="justify-center">
         {{ selected_report_title }}
       </v-card-title>
-      <v-card-text align="center">Last updated: {{last_updated}} <v-spacer /><v-btn @click="refresh" class="mt-2">Refresh Data</v-btn></v-card-text>
-        <v-container v-if="loading">
-          <v-row>
-            <v-col align="center">
-              <v-icon class="spin">mdi-reload</v-icon>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col align="center">
-              {{ loadProgress }} %
-            </v-col>
-          </v-row>
-        </v-container>
-        <v-data-table
-          v-if="tableData.length > 0"
-          :headers="tableHeaders"
-          :items="tableData"
-          :items-per-page="25"
-          class="elevation-1"
-          :search="search"
-          :custom-filter="filter"
+      <v-card-text align="center">
+        Last updated: {{ last_updated }} <v-spacer /><v-btn
+          class="mt-2"
+          @click="refresh"
         >
-          <template v-slot:top>
-            <v-text-field
-              v-model="search"
-              label="Search"
-              class="mx-4"
-              prepend-inner-icon="mdi-magnify"
-              outlined
-            ></v-text-field>
-          </template>
-        </v-data-table>
+          Refresh Data
+        </v-btn>
+      </v-card-text>
+      <v-container v-if="loading">
+        <v-row>
+          <v-col align="center">
+            <v-icon class="spin">
+              mdi-reload
+            </v-icon>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col align="center">
+            {{ loadProgress }} %
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-data-table
+        v-if="tableData.length > 0"
+        :headers="tableHeaders"
+        :items="tableData"
+        :items-per-page="25"
+        class="elevation-1"
+        :search="search"
+        :custom-filter="filter"
+      >
+        <template #top>
+          <v-text-field
+            v-model="search"
+            label="Search"
+            class="mx-4"
+            prepend-inner-icon="mdi-magnify"
+            outlined
+          />
+        </template>
+      </v-data-table>
     </v-card>
   </v-container>
 </template>
-
-<style>
-  .spin {
-    animation-name: spin;
-    animation-duration: 1000ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-  }
-  @keyframes spin {
-    from {
-      transform:rotate(0deg);
-    }
-    to {
-      transform:rotate(360deg);
-    }
-  }
-</style>
 
 <script>
   import axios from 'axios'
@@ -104,6 +95,24 @@
       selected_report_url: "",
       selected_report_freshest: false,
     }),
+    mounted() {
+      // from stackoverflow
+      // https://stackoverflow.com/questions/35914069/how-can-i-get-query-parameters-from-a-url-in-vue-js
+      let uri = window.location.href.split('?');
+      if(uri.length == 2) {
+        let vars = uri[1].split('&');
+        let getVars = {};
+        let tmp = '';
+        vars.forEach(function(v) {
+          tmp = v.split('=');
+          if(tmp.length == 2)
+            getVars[tmp[0]] = tmp[1];
+        });
+        this.selected_report_url = getVars['url']
+        this.selected_report_freshest = getVars['freshest'] == 'true'
+        this.viewOnline(this.api_domain + getVars['url'] + '?format=json&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
+      }
+    },
     methods: {
       async viewOnline(urlLink, selected_report) {
         this.selected_report_title = selected_report
@@ -174,24 +183,23 @@
         }
         return false
       }
-    },
-    mounted() {
-      // from stackoverflow
-      // https://stackoverflow.com/questions/35914069/how-can-i-get-query-parameters-from-a-url-in-vue-js
-      let uri = window.location.href.split('?');
-      if(uri.length == 2) {
-        let vars = uri[1].split('&');
-        let getVars = {};
-        let tmp = '';
-        vars.forEach(function(v) {
-          tmp = v.split('=');
-          if(tmp.length == 2)
-            getVars[tmp[0]] = tmp[1];
-        });
-        this.selected_report_url = getVars['url']
-        this.selected_report_freshest = getVars['freshest'] == 'true'
-        this.viewOnline(this.api_domain + getVars['url'] + '?format=json&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
-      }
     }
   }
 </script>
+
+<style>
+  .spin {
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  @keyframes spin {
+    from {
+      transform:rotate(0deg);
+    }
+    to {
+      transform:rotate(360deg);
+    }
+  }
+</style>

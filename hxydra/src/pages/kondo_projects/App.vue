@@ -6,12 +6,17 @@
       dark
     >
       <div class="d-flex align-center">
-        <v-btn class="text-h4 font-weight-bold text-none" text>Kondo</v-btn>
+        <v-btn
+          class="text-h4 font-weight-bold text-none"
+          text
+        >
+          Kondo
+        </v-btn>
       </div>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -20,8 +25,8 @@
             href="/kondo_projects"
             color="#483682 accent"
             v-bind="attrs"
-            v-on="on"
             disabled
+            v-on="on"
           >
             <v-icon>
               mdi-home
@@ -30,8 +35,11 @@
         </template>
         <span>Home</span>
       </v-tooltip>
-      <v-tooltip bottom v-if="write_perm">
-        <template v-slot:activator="{on, attrs}">
+      <v-tooltip
+        v-if="write_perm"
+        bottom
+      >
+        <template #activator="{on, attrs}">
           <v-btn
             
             class="mx-1"
@@ -51,7 +59,7 @@
         <span>Create New Project</span>
       </v-tooltip>
       <v-tooltip bottom>
-        <template v-slot:activator="{on, attrs}">
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -69,8 +77,11 @@
         </template>
         <span>Download Reports</span>
       </v-tooltip>
-      <v-tooltip bottom v-if="write_perm">
-        <template v-slot:activator="{on, attrs}">
+      <v-tooltip
+        v-if="write_perm"
+        bottom
+      >
+        <template #activator="{on, attrs}">
           <v-btn
             class="mx-1"
             fab
@@ -91,7 +102,7 @@
     </v-app-bar>
 
     <v-main>
-      <ProjectsList/>
+      <ProjectsList />
     </v-main>
   </v-app>
 </template>

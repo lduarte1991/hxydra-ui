@@ -5,7 +5,7 @@
       data-testid="errorBox"
     >
       {{ errorMessage }}
-      <template v-slot:action="{ attrs }">
+      <template #action="{ attrs }">
         <v-btn
           color="white"
           text
@@ -31,7 +31,7 @@
               label="Project Prefix"
               hint="Cannot be changed after creation. Must be unique"
               required
-            ></v-text-field>
+            />
           </v-col>
           <v-col class="col-2">
             <v-text-field
@@ -42,15 +42,14 @@
               type="number"
               :disabled="!add_seq"
               required
-            ></v-text-field>
+            />
           </v-col>
           <v-col class="col-3">
             <v-checkbox
               v-model="add_seq"
               label="Part of a sequence?"
               @click="sequence_num = 1"
-            >
-            </v-checkbox>
+            />
           </v-col>
           <v-col class="col-2">
             <v-text-field
@@ -60,7 +59,7 @@
               :rules="posIntRules"
               required
               disabled
-            ></v-text-field>
+            />
           </v-col>
           <v-col class="col-2">
             <v-text-field
@@ -70,9 +69,8 @@
               :rules="posIntRules"
               required
               disabled
-            ></v-text-field>
+            />
           </v-col>
-          
         </v-row>
         <v-row>
           <v-col class="col-12">
@@ -81,7 +79,7 @@
               label="Project Title"
               :rules="titleRules"
               required
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -90,23 +88,24 @@
               v-model="common_project_name"
               :items="commonNames"
               label="Common Project Name"
-            >
-            </v-combobox>
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col class="col-12">
             <v-text-field
-              label="Approximate Launch & End Date"
               v-model="approx_date"
+              label="Approximate Launch & End Date"
               :disabled="launch_date.length > 0 || end_date.length > 0"
-
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
         <v-row class="mb-10">
           <v-col class="col-4 ml-3">
-            <v-layout row wrap>
+            <v-layout
+              row
+              wrap
+            >
               <v-menu
                 v-model="launchDatePop"
                 :close-on-content-click="false"
@@ -115,34 +114,35 @@
                 min-width="290px"
                 max-width="290px"
               >
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-text-field
+                    v-model="launch_date"
                     label="Exact Launch Date"
                     prepend-icon="mdi-calendar-month"
-                    v-model="launch_date"
-                    v-on="on"
                     persistent-hint
                     :disabled="approx_date.length > 0"
                     clearable
                     :rules="dateAfterRule"
+                    v-on="on"
                     @click:clear="launch_date = ''"
-                    v-on:keydown="preventNonNums"
+                    @keydown="preventNonNums"
                     @change="validate"
-                  >
-                  </v-text-field>
+                  />
                 </template>
                 <v-date-picker
-                  autofocus
                   v-model="launch_date"
+                  autofocus
                   no-title
                   @change="launchDatePop = false"
-                >
-                </v-date-picker>
+                />
               </v-menu>
             </v-layout>
           </v-col>
           <v-col class="col-4 ml-5">
-            <v-layout row wrap>
+            <v-layout
+              row
+              wrap
+            >
               <v-menu
                 v-model="endDatePop"
                 :close-on-content-click="false"
@@ -151,28 +151,26 @@
                 min-width="290px"
                 max-width="290px"
               >
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-text-field
+                    v-model="end_date"
                     label="Exact End Date"
                     prepend-icon="mdi-calendar-month"
-                    v-model="end_date"
-                    v-on="on"
                     persistent-hint
                     :disabled="approx_date.length > 0"
                     clearable
-                    @click:clear="end_date = ''"
                     :rules="dateBeforeRule"
-                    v-on:keydown="preventNonNums"
+                    v-on="on"
+                    @click:clear="end_date = ''"
+                    @keydown="preventNonNums"
                     @change="validate"
-                  >
-                  </v-text-field>
+                  />
                 </template>
                 <v-date-picker
                   v-model="end_date"
                   no-title
                   @change="endDatePop = false"
-                >
-                </v-date-picker>
+                />
               </v-menu>
             </v-layout>
           </v-col>
@@ -216,9 +214,11 @@
           <v-btn
             color="#483682"
             dark
-            @click="createProject"
             tabindex="0"
-          >Create</v-btn>
+            @click="createProject"
+          >
+            Create
+          </v-btn>
         </v-col>
         <v-col>
           <v-btn
@@ -232,7 +232,9 @@
           <v-btn
             tabindex="0"
             href="/kondo_projects"
-          >Cancel</v-btn>
+          >
+            Cancel
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -279,6 +281,62 @@
       api_url: process.env.VUE_APP_KONDO_API_URL + "project/",
       api_base: process.env.VUE_APP_KONDO_API_URL,
     }),
+    computed: {
+      nickname() {
+        let sequence_val = "_" + this.sequence_num.toString().padStart(2, '0')
+        return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run.toString().padStart(2, '0')
+      },
+      nicknameRules () {
+        const rules = []
+        const ruleMax = v => (v || '').length <= 5 || 'A maximum of 5 chars is allowed'
+        const ruleMin = v => (v || '').length > 0 || 'A minum of 1 char is required'
+        rules.push(ruleMax)
+        rules.push(ruleMin)
+        return rules
+      },
+      dateAfterRule () {
+        const rules = []
+        const ruleAddEnd = v => !v || (v && (this.end_date !== null) && (this.end_date !== undefined) && (this.end_date !== '')) || 'Must add end date'
+        const ruleAft = v => !v || v <= this.end_date || 'Date should not be after End Date'
+        const ruleMustHaveDate = v => v !== this.approx_date || 'Must have either exact dates or an approximate date.'
+        rules.push(ruleAddEnd)
+        rules.push(ruleAft)
+        rules.push(ruleMustHaveDate)
+        return rules
+      },
+      dateBeforeRule () {
+        const rules = []
+        const ruleAddLaunch = v => !v || (v && (this.launch_date !== null) && (this.launch_date !== undefined) && (this.launch_date !== '')) || 'Must add launch date'
+        const ruleBef = v => !v || v >= this.launch_date || 'Date should not be before Launch Date'
+        const ruleMustHaveDate = v => v !== this.approx_date || 'Must have either exact dates or an approximate date.'
+        rules.push(ruleAddLaunch)
+        rules.push(ruleBef)
+        rules.push(ruleMustHaveDate)
+        return rules
+      },
+      posIntRules () {
+        const rules = []
+        const ruleMin = v => v > -1 || 'Cannot be negative'
+        rules.push(ruleMin)
+        return rules
+      },
+      sequenceRules() {
+        const rules = []
+        const nonZero = v => v && v != 0 || 'Sequence must start at 1'
+        const ruleMin = v => v && v > -1 || 'Cannot be negative'
+        rules.push(nonZero)
+        rules.push(ruleMin)
+        return rules
+      },
+      titleRules () {
+        const rules = []
+        const ruleMax = v => (v || '').length <= 255 || 'A maximum of 255 chars is allowed'
+        const ruleMin = v => (v || '').length > 0 || 'A minum of 1 char is required'
+        rules.push(ruleMin)
+        rules.push(ruleMax)
+        return rules
+      }
+    },
     mounted() {
       this.getCommonNames()
     },
@@ -350,62 +408,6 @@
       },
       validate () {
         return this.$refs.createform.validate()
-      }
-    },
-    computed: {
-      nickname() {
-        let sequence_val = "_" + this.sequence_num.toString().padStart(2, '0')
-        return this.prefix + sequence_val + "_v" + this.version + "_r" + this.run.toString().padStart(2, '0')
-      },
-      nicknameRules () {
-        const rules = []
-        const ruleMax = v => (v || '').length <= 5 || 'A maximum of 5 chars is allowed'
-        const ruleMin = v => (v || '').length > 0 || 'A minum of 1 char is required'
-        rules.push(ruleMax)
-        rules.push(ruleMin)
-        return rules
-      },
-      dateAfterRule () {
-        const rules = []
-        const ruleAddEnd = v => !v || (v && (this.end_date !== null) && (this.end_date !== undefined) && (this.end_date !== '')) || 'Must add end date'
-        const ruleAft = v => !v || v <= this.end_date || 'Date should not be after End Date'
-        const ruleMustHaveDate = v => v !== this.approx_date || 'Must have either exact dates or an approximate date.'
-        rules.push(ruleAddEnd)
-        rules.push(ruleAft)
-        rules.push(ruleMustHaveDate)
-        return rules
-      },
-      dateBeforeRule () {
-        const rules = []
-        const ruleAddLaunch = v => !v || (v && (this.launch_date !== null) && (this.launch_date !== undefined) && (this.launch_date !== '')) || 'Must add launch date'
-        const ruleBef = v => !v || v >= this.launch_date || 'Date should not be before Launch Date'
-        const ruleMustHaveDate = v => v !== this.approx_date || 'Must have either exact dates or an approximate date.'
-        rules.push(ruleAddLaunch)
-        rules.push(ruleBef)
-        rules.push(ruleMustHaveDate)
-        return rules
-      },
-      posIntRules () {
-        const rules = []
-        const ruleMin = v => v > -1 || 'Cannot be negative'
-        rules.push(ruleMin)
-        return rules
-      },
-      sequenceRules() {
-        const rules = []
-        const nonZero = v => v && v != 0 || 'Sequence must start at 1'
-        const ruleMin = v => v && v > -1 || 'Cannot be negative'
-        rules.push(nonZero)
-        rules.push(ruleMin)
-        return rules
-      },
-      titleRules () {
-        const rules = []
-        const ruleMax = v => (v || '').length <= 255 || 'A maximum of 255 chars is allowed'
-        const ruleMin = v => (v || '').length > 0 || 'A minum of 1 char is required'
-        rules.push(ruleMin)
-        rules.push(ruleMax)
-        return rules
       }
     }
   }
