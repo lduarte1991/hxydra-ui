@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <v-container id="edit-form">
     <v-toolbar
@@ -700,7 +701,12 @@
   export default {
     name: 'EditForm',
     props: {
-      course: Object
+      course: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
     },
     data: () => ({
       errorBox: false,
