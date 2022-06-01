@@ -124,7 +124,7 @@ try {
   perms = false
 }
 export default {
-  name: 'ReportList',
+  name: 'ReportsList',
 
   components: {
     ReportList
