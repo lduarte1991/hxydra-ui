@@ -929,8 +929,8 @@
         //course-v1:HarvardX+PH211x+1T2021
         let normalizedID = val.replace('course-v1:', '').replace(/\+/g, '/')
         let split_id = normalizedID.split('/')
-        this.course.program_run = split_id[1]
-        this.course.program_code = split_id[2]
+        this.course.program_code = split_id[1]
+        this.course.program_run = split_id[2]
         this.course.program_id = normalizedID
       },
       quickfillhbso: function(val) {
