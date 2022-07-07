@@ -1003,6 +1003,8 @@
       },
       closeEdit () {
         this.$emit('closeEdit', false)
+        this.quickfilledx = ''
+        this.quickfillhbso = ''
       },
       saveChanges () {
         if (!this.validate()) {
@@ -1037,6 +1039,8 @@
             options
           ).then(() => {
             this.$emit('closeEdit', this.course)
+            this.quickfilledx = ''
+            this.quickfillhbso = ''
           }).catch(e => {
             self.errorBox = true
             self.db_errors = e.response.data.message
