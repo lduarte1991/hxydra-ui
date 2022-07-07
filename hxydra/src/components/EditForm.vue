@@ -935,7 +935,7 @@
         let split_id = normalizedID.split('/')
         this.course.program_code = split_id[1]
         this.course.program_run = split_id[2]
-        this.course.program_id = normalizedID
+        this.course.program_id = val
       },
       quickfillhbso: function(val) {
         try {
