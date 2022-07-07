@@ -114,7 +114,12 @@
         });
         this.selected_report_url = getVars['url']
         this.selected_report_freshest = getVars['freshest'] == 'true'
-        this.viewOnline(this.api_domain + getVars['url'] + '?format=json&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
+        let sortkey = 'sortkey' in getVars ? getVars['sortkey'] : 'None'
+        if (sortkey == 'None') {
+          this.viewOnline(this.api_domain + getVars['url'] + '?format=json&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
+        } else {
+          this.viewOnline(this.api_domain + getVars['url'] + '?format=json&sortkey=' + sortkey + '&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
+        }
       }
     },
     methods: {
