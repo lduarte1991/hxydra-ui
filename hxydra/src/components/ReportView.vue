@@ -25,7 +25,10 @@
       <v-card-title class="justify-center">
         {{ selected_report_title }}
       </v-card-title>
-      <v-card-text align="center">
+      <v-card-text
+        v-if="show_cache_ui"
+        align="center"
+      >
         Last updated: {{ last_updated }} <v-spacer /><v-btn
           class="mt-2"
           @click="refresh"
@@ -80,6 +83,7 @@
       reports: [],
       api_domain: process.env.VUE_APP_KONDO_DOMAIN,
       api_url: process.env.VUE_APP_KONDO_API_URL + 'report/',
+      show_cache_ui: process.env.VUE_APP_SHOW_CACHE_UI,
       progressValue: 0,
       errorBox: false,
       errorMessage: '',

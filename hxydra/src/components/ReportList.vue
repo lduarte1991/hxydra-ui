@@ -47,11 +47,12 @@
     >
       <v-card-title>
         Report List <v-spacer /> <v-switch
+          v-if="show_cache_ui"
           v-model="freshest"
           :label="cachedLabel"
         />
       </v-card-title>
-      <v-card-text>If links don't download when clicking: Right click + Download/Save As<br>Cached Version is faster, but may be outdated. Latest version may take a few minutes.</v-card-text>
+      <v-card-text>If links don't download when clicking: Right click + Download/Save As<br><span v-if="show_cache_ui">Cached Version is faster, but may be outdated. Latest version may take a few minutes.</span></v-card-text>
       <v-container>
         <v-row
           v-for="(item, i) in reports"
@@ -74,7 +75,7 @@
               <v-icon>mdi-download</v-icon> CSV
             </v-btn>
             <p
-              v-if="item.last_updated && !freshest"
+              v-if="item.last_updated && !freshest && show_cache_ui"
               class="text-caption"
             >
               Last Updated:<br> {{ new Date(item.last_updated.csv).toLocaleString() }}
@@ -91,7 +92,7 @@
               <v-icon>mdi-download</v-icon> JSON
             </v-btn>
             <p
-              v-if="item.last_updated && !freshest"
+              v-if="item.last_updated && !freshest && show_cache_ui"
               class="text-caption"
             >
               Last Updated:<br> {{ new Date(item.last_updated.json).toLocaleString() }}
@@ -165,6 +166,7 @@
       reports: [],
       api_domain: process.env.VUE_APP_KONDO_DOMAIN,
       api_url: process.env.VUE_APP_KONDO_API_URL + 'report/',
+      show_cache_ui: process.env.VUE_APP_SHOW_CACHE_UI,
       progressValue: 0,
       errorBox: false,
       errorMessage: '',
