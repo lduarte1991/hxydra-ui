@@ -83,7 +83,7 @@
       reports: [],
       api_domain: process.env.VUE_APP_KONDO_DOMAIN,
       api_url: process.env.VUE_APP_KONDO_API_URL + 'report/',
-      show_cache_ui: process.env.VUE_APP_SHOW_CACHE_UI,
+      show_cache_ui: (process.env.VUE_APP_SHOW_CACHE_UI == "true"),
       progressValue: 0,
       errorBox: false,
       errorMessage: '',
@@ -97,7 +97,7 @@
       selected_report_title: "Select Report Above to View Online",
       search: '',
       selected_report_url: "",
-      selected_report_freshest: false,
+      selected_report_freshest: !(process.env.VUE_APP_SHOW_CACHE_UI == "true"),
     }),
     mounted() {
       // from stackoverflow
