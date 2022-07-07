@@ -887,21 +887,21 @@
       },
       posIntRules () {
         const rules = []
-        const ruleMin = v => v >= 0 || 'Must be at least 0'
+        const ruleMin = v => parseInt(v, 10) >= 0 || 'Must be at least 0'
         rules.push(ruleMin)
         return rules
       },
       lessThanMax() {
         const rules = []
-        const ruleMin = v => v > -1 || 'Cannot be negative'
-        const ruleLtMax = v => v <= this.course.estimated_effort_max || 'Cannot be more than max'
+        const ruleMin = v => parseFloat(v) > -1 || 'Cannot be negative'
+        const ruleLtMax = v => parseFloat(v) <= parseFloat(this.course.estimated_effort_max) || 'Cannot be more than max'
         rules.push(ruleMin)
         rules.push(ruleLtMax)
         return rules
       },
       greaterThanMin() {
         const rules = []
-        const ruleGtMin = v => v >= this.course.estimated_effort_min || 'Cannot be less than min effort'
+        const ruleGtMin = v => parseFloat(v) >= parseFloat(this.course.estimated_effort_min) || 'Cannot be less than min effort'
         rules.push(ruleGtMin)
         return rules
       },
@@ -919,7 +919,7 @@
       },
       moreThanOne() {
         const rules = []
-        const gtOne = v => !v || v > 0 || 'Duration must be bigger than zero weeks'
+        const gtOne = v => !v || parseFloat(v) > 0 || 'Duration must be bigger than zero weeks'
         rules.push(gtOne)
         return rules
       }
