@@ -569,12 +569,13 @@
             </v-col>
             <v-col class="col-6">
               <v-select
-                v-model="course.platform_discipline"
                 item-value="pk"
                 :items="filteredPlatformDiscipline"
                 label="Platform Disciplines"
                 no-data-text="No Disciplines for chosen Delivery Platform"
                 multiple
+                :value="platform_discipline_pk"
+                @input="onPlatformDisciplineInput"
               />
             </v-col>
           </v-row>
@@ -800,6 +801,9 @@
       people_api_url: process.env.VUE_APP_KONDO_API_URL + 'person/',
     }),
     computed: {
+      platform_discipline_pk() {
+        return this.course.platform_discipline.map(d => d.pk)
+      },
       launchDateDisplay() {
         if (this.$refs.editform) {
           this.$refs.editform.validate()
@@ -1006,6 +1010,9 @@
         this.quickfilledx = ''
         this.quickfillhbso = ''
       },
+      onPlatformDisciplineInput (inputList) {
+        this.course.platform_discipline = this.normalizeDiscipline(inputList)
+      },
       saveChanges () {
         if (!this.validate()) {
           return
@@ -1026,7 +1033,6 @@
         options.enrollment_date = self.normalizeDate(options.enrollment_date)
         options.cert_enrollment_date = self.normalizeDate(options.cert_enrollment_date)
         options.marketing_launch_date = self.normalizeDate(options.marketing_launch_date)
-        options.platform_discipline = self.normalizeDiscipline(options.platform_discipline)
         options.technical_platform = self.normalizeTechnicalPlatform(options.technical_platform)
         options.application_open_date = self.normalizeDate(options.application_open_date)
         options.application_close_date = self.normalizeDate(options.application_close_date)
