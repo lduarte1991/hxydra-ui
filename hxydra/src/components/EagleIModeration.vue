@@ -326,7 +326,7 @@
         // need to figure out how to handle current_moderator
         // TODO: only if necessary, moderated_reason should be updated
         axios.post(this.api_eaglei_url + 'mod/', {
-          'cid': item.comment_id,
+          'comment_id': item.comment_id,
           'flagged': item.flagged,
           'moderated': item.seen,
           'moderated_by': this.current_moderator,
