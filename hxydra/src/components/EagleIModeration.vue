@@ -277,7 +277,7 @@
             return value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) > -1
           }
         }
-        return falsex
+        return false
       },
       itemBackground (item) {
         // returns proper class (and therefore UI) per row
