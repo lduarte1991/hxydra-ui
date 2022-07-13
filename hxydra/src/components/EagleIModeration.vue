@@ -330,7 +330,7 @@
           'flagged': item.flagged,
           'moderated': item.seen,
           'moderated_by': this.current_moderator,
-          'moderated_date': new Date().toISOString().substring(0, 10),
+          'moderated_date': new Date().toISOString(),
           'moderated_reason': '',
           'comment_created_date': item.comment_date_created
         }).catch(e => {
@@ -402,7 +402,7 @@
         self.comments = [];
         self.loading = true;
         await axios.get(
-          self.api_eaglei_url + params
+          self.api_eaglei_url + 'comment/' + params
         )
           .then(data => {
             let comments_data = data.data
