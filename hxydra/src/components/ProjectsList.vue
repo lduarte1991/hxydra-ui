@@ -127,7 +127,7 @@
           />
         </template>
         <template #item="{ item }">
-          <tr>
+          <tr @click="viewDetail(item)" style="cursor:pointer">
             <td>
               {{ item['nickname'] }}
             </td>
@@ -150,7 +150,7 @@
                     <v-icon
                       small
                       class="mr-2"
-                      @click="editItem(item)"
+                      @click.stop.prevent="editItem(item)"
                     >
                       mdi-pencil
                     </v-icon>
@@ -355,16 +355,20 @@
           })
       },
       editItem (item) {
+
         this.getItemDetail(item)
           .then(() => this.editing = true)
           .then(() => this.detail = false)
 
       },
       async viewDetail (item) {
-        this.getItemDetail(item)
-          .then(() => this.rowItem = item)
-          .then(() => this.detail = true)
-          .then(() => this.editing = false)
+        var selection = window.getSelection();
+        if(selection.toString().length === 0) {
+          this.getItemDetail(item)
+            .then(() => this.rowItem = item)
+            .then(() => this.detail = true)
+            .then(() => this.editing = false)
+        }
       },
       async deleteItem (item) {
         if (!confirm("Are you sure you want to delete?")) {

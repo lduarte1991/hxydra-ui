@@ -48,7 +48,7 @@
             <v-checkbox
               v-model="add_seq"
               label="Part of a sequence?"
-              @click="sequence_num = 1"
+              @click="sequence_num = add_seq ? 1 : 0"
             />
           </v-col>
           <v-col class="col-2">
@@ -270,7 +270,7 @@
       rerun: 'string',
       version: 1,
       run: 0,
-      sequence_num: 1,
+      sequence_num: 0,
       revenue_school: 'string',
       launchDatePop: false,
       endDatePop: false,
@@ -323,9 +323,7 @@
       },
       sequenceRules() {
         const rules = []
-        const nonZero = v => v && v != 0 || 'Sequence must start at 1'
-        const ruleMin = v => v && v > -1 || 'Cannot be negative'
-        rules.push(nonZero)
+        const ruleMin = v => v > -1 || 'Cannot be negative'
         rules.push(ruleMin)
         return rules
       },
@@ -378,6 +376,7 @@
             version: this.version,
             run: this.run,
             sequence: this.sequence_num,
+            is_sequence: this.add_seq,
             launch_date: start_date,
             end_date: end_date,
             nickname: this.nickname,
