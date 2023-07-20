@@ -56,6 +56,22 @@
               {{ course.status }}
             </v-col>
           </v-row>
+          <v-row>
+            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
+              Description:
+            </v-col>
+            <v-col class="col-lg-8 col-md-9 col-sm-10 col-9">
+              {{ course.description }}
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="text-caption col-lg-2 col-md-3 col-sm-2 col-3">
+              Short Summary:
+            </v-col>
+            <v-col class="col-lg-8 col-md-9 col-sm-10 col-9">
+              {{ course.summary }}
+            </v-col>
+          </v-row>
         </v-container>
       </v-col>
       <v-col class="col-lg-6 col-md-6 col-sm-12 col-xs-12">

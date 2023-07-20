@@ -85,6 +85,22 @@
             />
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
+          <v-textarea
+            v-model="course.description"
+            label="Course Description"
+          ></v-textarea>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+          <v-textarea
+            v-model="course.summary"
+            label="Course Short Summary"
+          ></v-textarea>
+          </v-col>
+        </v-row>
         <v-card class="pa-5 mb-5">
           <v-card-subtitle>Run Metadata</v-card-subtitle>
           <v-row>
