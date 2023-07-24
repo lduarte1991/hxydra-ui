@@ -127,7 +127,10 @@
           />
         </template>
         <template #item="{ item }">
-          <tr @click="viewDetail(item)" style="cursor:pointer">
+          <tr 
+            style="cursor:pointer" 
+            @click="viewDetail(item)"
+          >
             <td>
               {{ item['nickname'] }}
             </td>

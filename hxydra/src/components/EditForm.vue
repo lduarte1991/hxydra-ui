@@ -87,18 +87,18 @@
         </v-row>
         <v-row>
           <v-col>
-          <v-textarea
-            v-model="course.description"
-            label="Course Description"
-          ></v-textarea>
+            <v-textarea
+              v-model="course.description"
+              label="Course Description"
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-          <v-textarea
-            v-model="course.summary"
-            label="Course Short Summary"
-          ></v-textarea>
+            <v-textarea
+              v-model="course.summary"
+              label="Course Short Summary"
+            />
           </v-col>
         </v-row>
         <v-card class="pa-5 mb-5">
