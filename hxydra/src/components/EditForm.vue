@@ -53,7 +53,7 @@
           </v-col>
         </v-row>
         <v-row class="mb-5">
-          <v-col class="col-4">
+          <v-col class="col-3">
             <v-text-field
               v-model="course.common_name"
               label="Common Project Name"
@@ -61,7 +61,7 @@
               required
             />
           </v-col>
-          <v-col class="col-3">
+          <v-col class="col-2">
             <v-select
               v-model="course.revenue_school"
               :items="school"
@@ -84,12 +84,19 @@
               label="Status"
             />
           </v-col>
+          <v-col class="col-2">
+            <v-checkbox
+              v-model="course.video_archived"
+              label="Course Videos Archived"
+            />
+          </v-col>
         </v-row>
         <v-row>
           <v-col>
             <v-textarea
               v-model="course.description"
               label="Course Description"
+              outlined
             />
           </v-col>
         </v-row>
@@ -98,6 +105,7 @@
             <v-textarea
               v-model="course.summary"
               label="Course Short Summary"
+              outlined
             />
           </v-col>
         </v-row>

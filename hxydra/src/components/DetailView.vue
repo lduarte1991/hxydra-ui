@@ -272,6 +272,25 @@
                             Faculty Agreements Signed
                           </v-col>
                         </v-row>
+                        <v-row>
+                          <v-col
+                            v-if="course.videos_archived"
+                            class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2"
+                          >
+                            <v-icon color="green">
+                              mdi-check-circle
+                            </v-icon>
+                          </v-col>
+                          <v-col
+                            v-else
+                            class="col-1 col-sm-1 col-md-2 col-lg-2 text-right pr-2"
+                          >
+                            <v-icon>mdi-close-octagon</v-icon>
+                          </v-col>
+                          <v-col class="col-10 col-sm-10 col-md-10 col-lg-10">
+                            Course Videos Archived
+                          </v-col>
+                        </v-row>
                       </v-container>
                     </v-col>
                     <v-col class="col-lg-4 col-md-4 col-sm-12 col-12">
