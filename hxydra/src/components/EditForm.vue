@@ -53,7 +53,7 @@
           </v-col>
         </v-row>
         <v-row class="mb-5">
-          <v-col class="col-3">
+          <v-col class="col-4">
             <v-text-field
               v-model="course.common_name"
               label="Common Project Name"
@@ -61,7 +61,7 @@
               required
             />
           </v-col>
-          <v-col class="col-2">
+          <v-col class="col-3">
             <v-select
               v-model="course.revenue_school"
               :items="school"
@@ -82,12 +82,6 @@
               v-model="course.status"
               :items="projectstatus"
               label="Status"
-            />
-          </v-col>
-          <v-col class="col-2">
-            <v-checkbox
-              v-model="course.video_archived"
-              label="Course Videos Archived"
             />
           </v-col>
         </v-row>
@@ -509,10 +503,17 @@
                 label="Self-Paced"
               />
             </v-col>
-            <v-col class="col-9">
+            <v-col class="col-4">
               <v-checkbox
                 v-model="course.faculty_agreement_signed"
                 label="Faculty Agreement Signed"
+              />
+            </v-col>
+            <v-col class="col-5">
+              <v-checkbox
+                disabled
+                v-model="course.videos_archived"
+                label="Course Videos Archived"
               />
             </v-col>
           </v-row>
