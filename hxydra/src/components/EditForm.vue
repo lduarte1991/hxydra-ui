@@ -90,6 +90,7 @@
             <v-textarea
               v-model="course.description"
               label="Course Description"
+              outlined
             />
           </v-col>
         </v-row>
@@ -98,6 +99,7 @@
             <v-textarea
               v-model="course.summary"
               label="Course Short Summary"
+              outlined
             />
           </v-col>
         </v-row>
@@ -501,10 +503,17 @@
                 label="Self-Paced"
               />
             </v-col>
-            <v-col class="col-9">
+            <v-col class="col-4">
               <v-checkbox
                 v-model="course.faculty_agreement_signed"
                 label="Faculty Agreement Signed"
+              />
+            </v-col>
+            <v-col class="col-5">
+              <v-checkbox
+                disabled
+                v-model="course.videos_archived"
+                label="Course Videos Archived"
               />
             </v-col>
           </v-row>
