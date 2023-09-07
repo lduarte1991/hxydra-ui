@@ -511,9 +511,9 @@
             </v-col>
             <v-col class="col-5">
               <v-checkbox
-                disabled
                 v-model="course.videos_archived"
                 label="Course Videos Archived"
+                disabled
               />
             </v-col>
           </v-row>
