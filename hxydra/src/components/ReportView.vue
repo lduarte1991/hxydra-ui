@@ -58,6 +58,7 @@
         class="elevation-1"
         :search="search"
         :custom-filter="filter"
+        no-gutters
       >
         <template #top>
           <v-text-field
@@ -167,7 +168,7 @@
                   text: key.replace('_', ' ').toUpperCase(),
                   sortable: true,
                   value: key,
-                  width: "150px"
+                  cellClass: 'no-padding'
                 })
               }
             }
@@ -197,6 +198,10 @@
 </script>
 
 <style>
+  .no-padding, th {
+    padding-left: 10px!important;
+    padding-right: 5px!important;
+  }
   .spin {
     animation-name: spin;
     animation-duration: 1000ms;
