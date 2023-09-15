@@ -201,6 +201,7 @@
   .no-padding, th {
     padding-left: 10px!important;
     padding-right: 5px!important;
+    min-width: 86px!important;
   }
   .spin {
     animation-name: spin;
