@@ -3,7 +3,7 @@
     <div class="text-center">
       <v-snackbar
         v-model="result_snackbar"
-        :multi-line="multiLine"
+        :multi-line="true"
         :color="result_color"
         centered
       >
@@ -221,6 +221,7 @@
       detail: false,
       editing: false,
       selected: undefined,
+      result_color: "white",
     }),
     mounted() {
       this.getUniqueProjects();

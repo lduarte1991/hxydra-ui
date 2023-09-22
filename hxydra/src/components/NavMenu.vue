@@ -57,7 +57,7 @@
       <span>Unique Projects</span>
     </v-tooltip>
     <v-tooltip
-      v-if="hasWritePerms"
+      v-if="hasWritePerms.create"
       bottom
     >
       <template #activator="{on, attrs}">
@@ -100,7 +100,7 @@
       <span>Download Reports</span>
     </v-tooltip>
     <v-tooltip 
-      v-if="hasWritePerms"
+      v-if="hasWritePerms.admin"
       bottom
     >
       <template #activator="{on, attrs}">
@@ -133,8 +133,16 @@
       type: String
     },
     hasWritePerms: {
-      default: false,
-      type: Boolean
+      default () {
+        return {
+          admin: false,
+          read: true,
+          update: false,
+          create: false,
+          delete: false
+        }
+      },
+      type: Object
     },
     pageTitle: {
       default: "",
