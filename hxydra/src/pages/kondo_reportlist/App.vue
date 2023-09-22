@@ -1,105 +1,10 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="#483682"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-btn
-          class="text-h4 font-weight-bold text-none"
-          text
-          href="/kondo_projects/"
-        >
-          Kondo
-        </v-btn><span class="text-h7">Reports</span>
-      </div>
-      <v-spacer />
-      <v-tooltip bottom>
-        <template #activator="{on, attrs}">
-          <v-btn
-            class="mx-1"
-            fab
-            dark
-            small
-            href="/kondo_projects"
-            color="#483682 accent"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>
-              mdi-home
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>Project List</span>
-      </v-tooltip>
-      <v-tooltip
-        v-if="write_perm"
-        bottom
-      >
-        <template #activator="{on, attrs}">
-          <v-btn
-            
-            class="mx-1"
-            fab
-            dark
-            small
-            href="/kondo_create"
-            color="#483682 accent"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>
-              mdi-plus
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>Create New Project</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template #activator="{on, attrs}">
-          <v-btn
-            class="mx-1"
-            fab
-            dark
-            small
-            href="/kondo_reportlist/"
-            color="#483682 accent"
-            v-bind="attrs"
-            disabled
-            v-on="on"
-          >
-            <v-icon>
-              mdi-download
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>Download Reports</span>
-      </v-tooltip>
-      <v-tooltip
-        v-if="write_perm"
-        bottom
-      >
-        <template #activator="{on, attrs}">
-          <v-btn
-            class="mx-1"
-            fab
-            dark
-            small
-            href="/kondo_choice/"
-            color="#483682 accent"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>
-              mdi-cog
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>Config Dropdown Lists</span>
-      </v-tooltip>
-    </v-app-bar>
+    <NavMenu
+      current-page="reports"
+      has-write-permissions="write_perms"
+      page-title="Reports"
+    />
 
     <v-main>
       <ReportList />
@@ -110,6 +15,8 @@
 <script>
 
 import ReportList from '../../components/ReportList';
+import NavMenu from '../../components/NavMenu';
+
 let perms = false
 try {
   const cookie = document.cookie
@@ -127,7 +34,8 @@ export default {
   name: 'ReportsList',
 
   components: {
-    ReportList
+    ReportList,
+    NavMenu
   },
 
   data: () => ({
