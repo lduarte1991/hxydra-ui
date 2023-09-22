@@ -1,5 +1,26 @@
 <template>
   <v-container>
+    <div class="text-center">
+      <v-snackbar
+        v-model="result_snackbar"
+        :multi-line="multiLine"
+        :color="result_color"
+        centered
+      >
+        {{ result_text }}
+
+        <template #action="{ attrs }">
+          <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="result_snackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </div>
     <v-dialog
       v-model="detail"
       width="80%"
@@ -11,22 +32,29 @@
           :headers="projectheaders"
           :items="selected.projects"
         >
-          <template #[`item.videos_archived`]="{ item }">
-            <v-icon
-              v-if="item.videos_archived"
-              color="green"
-            >
-              mdi-check-circle
-            </v-icon>
-            <v-icon
-              v-else
-              color="red"
-            >
-              mdi-close-octagon
-            </v-icon>
+          <template #[`item.video_archived`]="{ item }">
+            <span v-if="!editing">
+              <v-icon
+                v-if="item.video_archived"
+                color="green"
+              >
+                mdi-check-circle
+              </v-icon>
+              <v-icon
+                v-else
+                color="red"
+              >
+                mdi-close-octagon
+              </v-icon>
+            </span>
+            <span v-else>
+              <v-checkbox
+                v-model="item.video_archived"
+                @change="archiveChanged(item)"
+              />
+            </span>
           </template>
         </v-data-table>
-        {{ selected.projects }}
       </v-card>
     </v-dialog>
     <v-card>
@@ -112,9 +140,10 @@
     if (typeof(cookie) !== "undefined") {
       let cookie_split = cookie.split(';').map(x => x.split('='))
       let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
-      if (perm_cookie_val.length > 0) {
-        perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
-      }
+      perms = perm_cookie_val.length > 0
+      // if (perm_cookie_val.length > 0) {
+      //   perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
+      // }
     }
   } catch {
     perms = false
@@ -125,6 +154,8 @@
     },
     data: () => ({
       search: '',
+      result_snackbar: false,
+      result_text: "",
       headers: [{
         text: 'Prefix',
         sortable: true,
@@ -143,14 +174,14 @@
       },{
         text: 'Actions',
         sortable: false,
-        align: 'left',
+        align: 'center',
         width: '10%',
         cellClass: 'no-padding'
       },],
       projectheaders: [{
         text: 'Videos Archived',
         sortable: false,
-        value: 'videos_archived',
+        value: 'video_archived',
         cellClass: 'no-padding'
       },{
         text: 'Prefix',
@@ -183,6 +214,7 @@
         value: 'title',
         cellClass: 'no-padding'
       }],
+      api_projects_url: process.env.VUE_APP_KONDO_API_URL,
       api_uniqueprojects_url: process.env.VUE_APP_KONDO_API_URL + 'projectps/',
       uniqueprojects: [],
       write_perm: perms,
@@ -238,8 +270,13 @@
       editItem (item) {
 
         this.getItemDetail(item)
+          .then(() => {
+            console.log(this.selected)
+            this.editing = true
+            this.detail = false
+          })
           .then(() => this.editing = true)
-          .then(() => this.detail = false)
+          .then(() => this.detail = true)
 
       },
       async viewDetail (item) {
@@ -251,6 +288,32 @@
             .then(() => this.editing = false)
         }
       },
+      async archiveChanged (item, selection) {
+        const self = this
+        console.log(item.video_archived)
+        if (!axios) {
+          return
+        }
+        await axios.patch(
+          self.api_projects_url + "project/" + item.nickname + '/', {
+            video_archived: item.video_archived,
+            prefix: item.prefix,
+            sequence: item.sequence,
+            version: item.version,
+            run: item.run,
+            common_name: item.common_name
+          }
+        )
+          .then(() => {
+            self.result_snackbar = true
+            self.result_text = "Video Archived set to " + item.video_archived + " for course with nickname " + item.nickname + "."
+            self.result_color = "green"
+          }, () => {
+            self.result_snackbar = true
+            self.result_text = "Something went wrong when trying to change video archive. Contact tech team."
+            self.result_color = "red"
+          })
+      }
     }
   }
 </script>
