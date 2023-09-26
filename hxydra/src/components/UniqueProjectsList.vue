@@ -27,7 +27,16 @@
       style="background: white"
     >
       <v-card v-if="selected">
-        <v-card-title>{{ selected.prefix }} + {{ selected.sequence }} Projects</v-card-title>
+        <v-card-title>
+          {{ selected.prefix }} + {{ selected.sequence }} Projects
+          <v-spacer />
+          <v-btn
+            class="ma-2"
+            @click="detail = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
         <v-data-table
           :headers="projectheaders"
           :items="selected.projects"
@@ -103,7 +112,7 @@
               <v-container>
                 <v-row>
                   <v-col
-                    v-if="write_perm"
+                    v-if="write_perms.update"
                     class="col-6"
                   >
                     <v-icon
@@ -134,20 +143,8 @@
 
 <script>
   import axios from 'axios'
-  let perms = false
-  try {
-    const cookie = document.cookie
-    if (typeof(cookie) !== "undefined") {
-      let cookie_split = cookie.split(';').map(x => x.split('='))
-      let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
-      perms = perm_cookie_val.length > 0
-      // if (perm_cookie_val.length > 0) {
-      //   perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
-      // }
-    }
-  } catch {
-    perms = false
-  }
+  import getPermissionsFromCookie from '../resources/permissions';
+
   export default {
     name: 'UniqueProjectsList',
     components: {
@@ -217,7 +214,7 @@
       api_projects_url: process.env.VUE_APP_KONDO_API_URL,
       api_uniqueprojects_url: process.env.VUE_APP_KONDO_API_URL + 'projectps/',
       uniqueprojects: [],
-      write_perm: perms,
+      write_perms: getPermissionsFromCookie(),
       detail: false,
       editing: false,
       selected: undefined,
