@@ -49,6 +49,7 @@
               label="Project Name"
               :rules="titleLength"
               required
+              :disabled="!('title' in course.writeable)"
             />
           </v-col>
         </v-row>
@@ -59,6 +60,7 @@
               label="Common Project Name"
               :rules="commonNameLength"
               required
+              :disabled="!('common_name' in course.writeable)"
             />
           </v-col>
           <v-col class="col-3">
