@@ -350,7 +350,7 @@
         }
         await axios.get(
           self.api_projects_url + item.nickname
-          + '/'
+          + '/?permission=true'
         )
           .then(data => this.selected = data.data)
           .catch(function(e) {
