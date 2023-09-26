@@ -60,6 +60,7 @@
               <v-checkbox
                 v-model="item.video_archived"
                 @change="archiveChanged(item)"
+                :disabled="!('video_archived' in item.writeable)"
               />
             </span>
           </template>
