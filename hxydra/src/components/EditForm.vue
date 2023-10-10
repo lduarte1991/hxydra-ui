@@ -1012,7 +1012,6 @@
     mounted() {
       this.getChoices()
       this.getPeople()
-      console.log(this.course, "read me")
     },
     methods: {
       getChoices () {
