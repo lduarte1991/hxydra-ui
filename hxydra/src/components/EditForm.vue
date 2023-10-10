@@ -532,9 +532,9 @@
             </v-col>
             <v-col class="col-5">
               <v-checkbox
-                v-model="course.videos_archived"
+                v-model="course.video_archived"
                 label="Course Videos Archived"
-                :disabled="!('videos_archived' in course.writeable)"
+                :disabled="!('video_archived' in course.writeable)"
               />
             </v-col>
           </v-row>
