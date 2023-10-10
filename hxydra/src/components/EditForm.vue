@@ -156,7 +156,7 @@
                 v-model="quickfilledx"
                 label="Quick-Fill edX"
                 placeholder="course-v1:HarvardX+PH211x+1T2021"
-                :disabled="!('program_run' in course.writeable) || !('program_number' in course.writeable)"
+                :disabled="!('program_run' in course.writeable) || !('program_code' in course.writeable) || !('program_id' in course.writeable)"
               />
             </v-col>
             <v-col class="col-6">
@@ -164,7 +164,7 @@
                 v-model="quickfillhbso"
                 label="Quick-Fill HBSO"
                 placeholder="DSFB2106A04"
-                :disabled="!('program_run' in course.writeable) || !('program_number' in course.writeable)"
+                :disabled="!('program_run' in course.writeable) || !('program_code' in course.writeable) || !('program_id' in course.writeable)"
               />
             </v-col>
           </v-row>
