@@ -177,16 +177,11 @@
         cellClass: 'no-padding'
       },],
       projectheaders: [{
-        text: 'Videos Archived',
-        sortable: false,
-        value: 'video_archived',
-        cellClass: 'no-padding'
-      },{
         text: 'Prefix',
         sortable: true,
         value: 'prefix',
         cellClass: 'no-padding'
-      },{
+      }, {
         text: 'Seq',
         sortable: true,
         value: 'sequence',
@@ -211,7 +206,12 @@
         sortable: true,
         value: 'title',
         cellClass: 'no-padding'
-      }],
+      }, {
+        text: 'Videos Archived',
+        sortable: false,
+        value: 'video_archived',
+        cellClass: 'no-padding'
+      },],
       api_projects_url: process.env.VUE_APP_KONDO_API_URL,
       api_uniqueprojects_url: process.env.VUE_APP_KONDO_API_URL + 'projectps/',
       uniqueprojects: [],
