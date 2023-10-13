@@ -57,7 +57,7 @@
       <span>Unique Projects</span>
     </v-tooltip>
     <v-tooltip
-      v-if="hasWritePerms.create"
+      v-if="hasWritePerms.create || hasWritePerms.admin"
       bottom
     >
       <template #activator="{on, attrs}">
