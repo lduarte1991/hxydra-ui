@@ -49,6 +49,7 @@
               label="Project Name"
               :rules="titleLength"
               required
+              :disabled="!('title' in course.writeable)"
             />
           </v-col>
         </v-row>
@@ -59,6 +60,7 @@
               label="Common Project Name"
               :rules="commonNameLength"
               required
+              :disabled="!('common_name' in course.writeable)"
             />
           </v-col>
           <v-col class="col-3">
@@ -67,6 +69,7 @@
               :items="school"
               label="Revenue Schools"
               multiple
+              :disabled="!('revenue_school' in course.writeable)"
               @input="revSchoolUpdated"
             />
           </v-col>
@@ -74,6 +77,7 @@
             <v-text-field
               v-model="course.subactivity"
               label="Subactivity"
+              :disabled="!('subactivity' in course.writeable)"
               required
             />
           </v-col>
@@ -82,6 +86,7 @@
               v-model="course.status"
               :items="projectstatus"
               label="Status"
+              :disabled="!('status' in course.writeable)"
             />
           </v-col>
         </v-row>
@@ -91,6 +96,7 @@
               v-model="course.description"
               label="Course Description"
               outlined
+              :disabled="!('description' in course.writeable)"
             />
           </v-col>
         </v-row>
@@ -100,6 +106,7 @@
               v-model="course.summary"
               label="Course Short Summary"
               outlined
+              :disabled="!('summary' in course.writeable)"
             />
           </v-col>
         </v-row>
@@ -149,6 +156,7 @@
                 v-model="quickfilledx"
                 label="Quick-Fill edX"
                 placeholder="course-v1:HarvardX+PH211x+1T2021"
+                :disabled="!('program_run' in course.writeable) || !('program_code' in course.writeable) || !('program_id' in course.writeable)"
               />
             </v-col>
             <v-col class="col-6">
@@ -156,6 +164,7 @@
                 v-model="quickfillhbso"
                 label="Quick-Fill HBSO"
                 placeholder="DSFB2106A04"
+                :disabled="!('program_run' in course.writeable) || !('program_code' in course.writeable) || !('program_id' in course.writeable)"
               />
             </v-col>
           </v-row>
@@ -165,12 +174,14 @@
                 v-model="course.program_run"
                 label="Program Run"
                 placeholder="e.g., 2T2021"
+                :disabled="!('program_run' in course.writeable)"
               />
             </v-col><v-col class="col-3">
               <v-text-field
                 v-model="course.program_code"
                 label="Program Number"
                 placeholder="e.g., AA123x"
+                :disabled="!('program_code' in course.writeable)"
               />
             </v-col>
             <v-col class="col-6">
@@ -179,6 +190,7 @@
                 label="Run ID"
                 placeholder="e.g., HarvardX/AA123x/2T2021"
                 hint="(Wave ID for HBSO. Course ID for edX)"
+                :disabled="!('program_id' in course.writeable)"
               />
             </v-col>
           </v-row>
@@ -206,7 +218,7 @@
                       :value="launchDateDisplay"
                       :rules="dateAfterRule"
                       clearable
-                      :disabled="course.fuzzy_launch_date !== null && course.fuzzy_launch_date.length > 0"
+                      :disabled="!('launch_date' in course.writeable) || course.fuzzy_launch_date !== null && course.fuzzy_launch_date.length > 0"
                       v-on="on"
                       @click:clear="course.launch_date = ''"
                       @change="launchTxtUpdate"
@@ -239,7 +251,7 @@
                       :value="endDateDisplay"
                       :rules="dateBeforeRule"
                       clearable
-                      :disabled="course.fuzzy_launch_date !== null && course.fuzzy_launch_date.length > 0"
+                      :disabled="!('end_date' in course.writeable) || course.fuzzy_launch_date !== null && course.fuzzy_launch_date.length > 0"
                       v-on="on"
                       @click:clear="course.end_date = ''"
                       @change="endTxtUpdate"
@@ -257,7 +269,7 @@
               <v-text-field
                 v-model="course.fuzzy_launch_date"
                 label="Approximate Launch & End Date"
-                :disabled="course.launch_date !== null && (course.launch_date.length > 0 || course.end_date.length > 0)"
+                :disabled="!('launch_date' in course.writeable) || !('end_date' in course.writeable) || course.launch_date !== null && (course.launch_date.length > 0 || course.end_date.length > 0)"
                 clearable
               />
             </v-col>
@@ -283,6 +295,7 @@
                       :value="marketingDateDisplay"
                       clearable
                       :rules="dateRules"
+                      :disabled="!('marketing_launch_date' in course.writeable)"
                       v-on="on"
                       @click:clear="course.marketing_launch_date = ''"
                       @change="marketingTxtUpdate"
@@ -316,6 +329,7 @@
                       :value="appOpenDateDisplay"
                       clearable
                       :rules="applicationDateAfterRule"
+                      :disabled="!('application_open_date' in course.writeable)"
                       v-on="on"
                       @click:clear="course.application_open_date = ''"
                       @change="appOpenTxtUpdate"
@@ -349,6 +363,7 @@
                       :value="appCloseDateDisplay"
                       clearable
                       :rules="applicationDateBeforeRule"
+                      :disabled="!('application_close_date' in course.writeable)"
                       v-on="on"
                       @click:clear="course.application_close_date = ''"
                       @change="appCloseTxtUpdate"
@@ -384,6 +399,7 @@
                       :value="enrollmentCutOffDateDisplay"
                       clearable
                       :rules="dateRules"
+                      :disabled="!('enrollment_date' in course.writeable)"
                       v-on="on"
                       @click:clear="course.enrollment_date = ''"
                       @change="enrollmentTxtUpdate"
@@ -417,6 +433,7 @@
                       :value="IDVCutOffDateDisplay"
                       clearable
                       :rules="dateRules"
+                      :disabled="!('cert_enrollment_date' in course.writeable)"
                       v-on="on"
                       @click:clear="course.cert_enrollment_date = ''"
                       @change="certEnrollmentTxtUpdate"
@@ -450,6 +467,7 @@
                       :value="sowDateDisplay"
                       clearable
                       :rules="dateRules"
+                      :disabled="!('sow_approval_date' in course.writeable)"
                       v-on="on"
                       @click:clear="course.sow_approval_date = ''"
                       @change="sowTxtUpdate"
@@ -472,6 +490,7 @@
               <v-checkbox
                 v-model="course.cert_available"
                 label="Certificate Available"
+                :disabled="!('cert_available' in course.writeable)"
               />
             </v-col>
             <v-col class="col-3">
@@ -479,7 +498,7 @@
                 v-model="course.cert_price"
                 number
                 label="Certificate Price"
-                :disabled="!course.cert_available"
+                :disabled="!course.cert_available || !('cert_price' in course.writeable)"
               />
             </v-col>
             <v-col class="col-3">
@@ -487,7 +506,7 @@
                 v-model="course.cert_rate_to_certify"
                 type="number"
                 label="Rate to Certify"
-                :disabled="!course.cert_available"
+                :disabled="!course.cert_available || !('cert_rate_to_certify' in course.writeable)"
                 oninput="this.value = Math.round(this.value)"
                 :rules="posIntRules"
               />
@@ -501,19 +520,21 @@
               <v-checkbox
                 v-model="course.self_paced"
                 label="Self-Paced"
+                :disabled="!('self_paced' in course.writeable)"
               />
             </v-col>
             <v-col class="col-4">
               <v-checkbox
                 v-model="course.faculty_agreement_signed"
                 label="Faculty Agreement Signed"
+                :disabled="!('faculty_agreement_signed' in course.writeable)"
               />
             </v-col>
             <v-col class="col-5">
               <v-checkbox
-                disabled
-                v-model="course.videos_archived"
+                v-model="course.video_archived"
                 label="Course Videos Archived"
+                :disabled="!('video_archived' in course.writeable)"
               />
             </v-col>
           </v-row>
@@ -524,6 +545,7 @@
                 label="Estimated hrs per week (Min)"
                 type="number"
                 :rules="lessThanMax"
+                :disabled="!('estimated_effort_min' in course.writeable)"
                 oninput="if (this.value < 1) {this.value = 0}"
                 required
                 @input="triggerEstimatedEffortValidation"
@@ -537,6 +559,7 @@
                 :rules="greaterThanMin"
                 oninput="if (this.value < 1) {this.value = 0}"
                 required
+                :disabled="!('estimated_effort_max' in course.writeable)"
               />
             </v-col>
             <v-col class="col-4">
@@ -546,6 +569,7 @@
                 type="number"
                 :rules="posIntRules"
                 required
+                :disabled="!('duration_weeks' in course.writeable)"
               />
             </v-col>
           </v-row>
@@ -555,6 +579,7 @@
                 v-model="course.enrollment_type"
                 :items="enrollmenttype"
                 label="Enrollment Type"
+                :disabled="!('enrollment_type' in course.writeable)"
               />
             </v-col>
             <v-col class="col-4">
@@ -562,6 +587,7 @@
                 v-model="course.delivery_platform"
                 :items="deliveryplatform"
                 label="Delivery Platform"
+                :disabled="!('delivery_platform' in course.writeable)"
                 @input="changeDeliveryPlatform"
               />
             </v-col>
@@ -570,6 +596,7 @@
                 v-model="course.technical_platform"
                 :items="technicalplatform"
                 label="Technical Platform"
+                :disabled="!('technical_platform' in course.writeable)"
               />
             </v-col>
           </v-row>
@@ -580,6 +607,7 @@
                 :items="school"
                 label="Affiliation"
                 multiple
+                :disabled="!('sponsoring_school' in course.writeable)"
               />
             </v-col>
           </v-row>
@@ -590,6 +618,7 @@
                 :items="vpaldiscipline"
                 label="VPAL Disciplines (Marketing)"
                 multiple
+                :disabled="!('vpal_discipline' in course.writeable)"
               />
             </v-col>
             <v-col class="col-6">
@@ -600,6 +629,7 @@
                 no-data-text="No Disciplines for chosen Delivery Platform"
                 multiple
                 :value="platform_discipline_pk"
+                :disabled="!('platform_discipline' in course.writeable)"
                 @input="onPlatformDisciplineInput"
               />
             </v-col>
@@ -612,12 +642,14 @@
               <v-text-field
                 v-model="course.enrollment_page_url"
                 label="Enrollment Page Url"
+                :disabled="!('enrollment_page_url' in course.writeable)"
               />
             </v-col>
             <v-col class="col-12">
               <v-text-field
                 v-model="course.public_url"
                 label="Public Url"
+                :disabled="!('public_url' in course.writeable)"
               />
             </v-col>
           </v-row>
@@ -648,6 +680,7 @@
                         :items="role"
                         :filter="filter"
                         label="Role"
+                        :disabled="!('team' in course.writeable)"
                       />
                     </td>
                     <td>
@@ -655,6 +688,7 @@
                         <v-row>
                           <v-col class="col-12">
                             <v-btn
+                              :disabled="!('team' in course.writeable)"
                               @click="deletePerson(item)"
                             >
                               <v-icon
@@ -677,6 +711,7 @@
                       :filter="filter"
                       item-text="name"
                       label="Add Person"
+                      :disabled="!('team' in course.writeable)"
                     />
                   </td>
                   <td class="pa-5">
@@ -685,11 +720,13 @@
                       :items="role"
                       :filter="filter"
                       label="Add role"
+                      :disabled="!('team' in course.writeable)"
                     />
                   </td>
                   <td class="pa-5 d-flex justify-center">
                     <v-btn
                       color="primary"
+                      :disabled="!('team' in course.writeable)"
                       @click="addTeam"
                     >
                       Add

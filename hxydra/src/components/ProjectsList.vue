@@ -49,28 +49,28 @@
           </v-btn>
           <v-spacer />
           <v-btn
-            v-if="write_perm"
+            v-if="write_perm.create"
             class="mr-3"
             @click="createNewSequence(rowItem)"
           >
             New Sequence
           </v-btn>
           <v-btn
-            v-if="write_perm"
+            v-if="write_perm.create"
             class="mr-3"
             @click="createNewVersion(rowItem)"
           >
             New Version
           </v-btn>
           <v-btn
-            v-if="write_perm"
+            v-if="write_perm.create"
             class="mr-3"
             @click="createNewRerun(rowItem)"
           >
             New Run
           </v-btn>
           <v-btn
-            v-if="write_perm"
+            v-if="write_perm.delete"
             @click="deleteItem(rowItem)"
           >
             <v-icon
@@ -147,7 +147,7 @@
               <v-container>
                 <v-row>
                   <v-col
-                    v-if="write_perm"
+                    v-if="write_perm.update"
                     class="col-6"
                   >
                     <v-icon
@@ -226,19 +226,21 @@
   import EditForm from './EditForm'
   import DetailView from './DetailView'
   import axios from 'axios'
-  let perms = false
-  try {
-    const cookie = document.cookie
-    if (typeof(cookie) !== "undefined") {
-      let cookie_split = cookie.split(';').map(x => x.split('='))
-      let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
-      if (perm_cookie_val.length > 0) {
-        perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
-      }
-    }
-  } catch {
-    perms = false
-  }
+  import getPermissionsFromCookie from '../resources/permissions';
+
+  // let perms = false
+  // try {
+  //   const cookie = document.cookie
+  //   if (typeof(cookie) !== "undefined") {
+  //     let cookie_split = cookie.split(';').map(x => x.split('='))
+  //     let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
+  //     if (perm_cookie_val.length > 0) {
+  //       perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
+  //     }
+  //   }
+  // } catch {
+  //   perms = false
+  // }
   export default {
     name: 'ProjectsList',
     components: {
@@ -253,7 +255,7 @@
       rowItem: undefined,
       errorMessage: "",
       errorBox: false,
-      write_perm: perms,
+      write_perm: getPermissionsFromCookie(),
       debugDialog: false,
       newProject: undefined,
       headers: [{
@@ -348,7 +350,7 @@
         }
         await axios.get(
           self.api_projects_url + item.nickname
-          + '/'
+          + '/?permission=true'
         )
           .then(data => this.selected = data.data)
           .catch(function(e) {

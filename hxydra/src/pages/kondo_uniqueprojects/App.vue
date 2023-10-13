@@ -1,26 +1,26 @@
 <template>
   <v-app>
     <NavMenu
-      current-page="choice"
+      current-page="unique"
       :has-write-perms="write_perms"
-      page-title="Configure Lists" 
+      page-title="Unique Projects"
     />
     <v-main>
-      <KondoChoice />
+      <UniqueProjectsList />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import KondoChoice from '../../components/Choice';
-import NavMenu from '../../components/NavMenu';
+import UniqueProjectsList from '../../components/UniqueProjectsList';
+import NavMenu from '../../components/NavMenu.vue';
 import getPermissionsFromCookie from '../../resources/permissions';
 
 export default {
   name: 'App',
 
   components: {
-    KondoChoice,
+    UniqueProjectsList,
     NavMenu
   },
 
