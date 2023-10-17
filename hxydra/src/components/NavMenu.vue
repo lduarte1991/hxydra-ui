@@ -93,11 +93,31 @@
           v-on="on"
         >
           <v-icon>
-            mdi-download
+            mdi-chart-box-outline
           </v-icon>
         </v-btn>
       </template>
       <span>Download Reports</span>
+    </v-tooltip>
+    <v-tooltip bottom>
+      <template #activator="{on, attrs}">
+        <v-btn
+          class="mx-1"
+          fab
+          dark
+          small
+          href="/kondo_customreport/"
+          color="#483682 accent"
+          :disabled="currentPage == 'customreport'"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon>
+            mdi-chart-box-plus-outline
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>Custom Report</span>
     </v-tooltip>
     <v-tooltip 
       v-if="hasWritePerms.admin"
