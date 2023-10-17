@@ -211,10 +211,10 @@
         class="col-12"
       >
         <p
+          v-if="selected.length == 0"
           class="error pa-3 white--text rounded"
           dark
           align="center"
-          v-if="selected.length == 0"
         >
           At least one column must be included to create custom report.
         </p>
@@ -253,6 +253,7 @@
         align="center"
       >
         <v-btn
+          class="mb-5"
           :href="'/kondo_reportview/?url=' + encodeURIComponent(viewOnlineURL) + '&title=Custom%20Report&freshest=true'"
           :disabled="selected.length == 0"
         >
