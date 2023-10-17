@@ -1,5 +1,7 @@
 <template>
-  <v-card>
+  <v-card
+    class="mb-10"
+  >
     <v-snackbar
       v-model="downloadBox"
       centered
@@ -224,6 +226,18 @@
           Download JSON Custom Report
         </v-btn>
       </v-col>
+      <v-col
+        class="col-12"
+        align="center"
+      >
+        <v-btn
+          :href="'/kondo_reportview/?url=' + encodeURIComponent(viewOnlineURL) + '&title=Custom%20Report&freshest=true'"
+        >
+          <v-icon class="mr-2">
+            mdi-eye
+          </v-icon> View Online
+        </v-btn>
+      </v-col>
     </v-row>
   </v-card>
 </template>
@@ -274,6 +288,19 @@
       },
       endAfterDisplay() {
         return this.getDate(this.end_after)
+      },
+      viewOnlineURL() {
+        let params = {
+          format: "json",
+          launch_before: this.launch_before != null ? this.launch_before : '',
+          launch_after: this.launch_after != null ? this.launch_after : '',
+          include_launch_after_none: this.include_launch_after_none,
+          end_before: this.end_before != null ? this.end_before : '',
+          end_after: this.end_after != null ? this.end_after : '',
+          exclude_video_archived: this.exclude_video_archived,
+          header: this.selected.join(',')
+        }
+        return "/kondo/v1/report/flex/?" + this.serialize(params);
       },
       customReportURLJSON() {
         let params = {

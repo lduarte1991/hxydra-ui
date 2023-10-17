@@ -124,12 +124,16 @@
       }
     },
     methods: {
-      async viewOnline(urlLink, selected_report) {
+      async viewOnline(urlLink1, selected_report) {
         this.selected_report_title = selected_report
         this.loading = true
         this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0"
         this.tableData = []
         this.tableHeaders = []
+        let urlLink = urlLink1
+        if (urlLink1.indexOf('flex%2F') > -1) {
+          urlLink = decodeURIComponent(urlLink1.replace('?format=json',''))
+        }
         if (!axios) {
           return
         }
