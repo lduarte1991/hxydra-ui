@@ -185,6 +185,13 @@
         <h3>Columns to Include</h3>
       </v-col>
       <v-col
+        class="col-12"
+      >
+        <p>
+          <a @click="selectAll">Check All</a> / <a @click="unselectAll">Uncheck All</a>
+        </p>
+      </v-col>
+      <v-col
         v-for="h in header_options"
         :key="h"
         class="col-4"
@@ -201,11 +208,29 @@
       class="mx-5"
     >
       <v-col
+        class="col-12"
+      >
+        <p
+          class="error pa-3 white--text rounded"
+          dark
+          align="center"
+          v-if="selected.length == 0"
+        >
+          At least one column must be included to create custom report.
+        </p>
+      </v-col>
+    </v-row>
+    <v-row
+      wrap
+      class="mx-5"
+    >
+      <v-col
         class="col-6"
         align="center"
       >
         <v-btn
           class="mb-5"
+          :disabled="selected.length == 0"
           @click="makeReport('csv')"
         >
           Download CSV Custom Report
@@ -217,6 +242,7 @@
       >
         <v-btn
           class="mb-5"
+          :disabled="selected.length == 0"
           @click="makeReport('json')"
         >
           Download JSON Custom Report
@@ -228,6 +254,7 @@
       >
         <v-btn
           :href="'/kondo_reportview/?url=' + encodeURIComponent(viewOnlineURL) + '&title=Custom%20Report&freshest=true'"
+          :disabled="selected.length == 0"
         >
           <v-icon class="mr-2">
             mdi-eye
@@ -412,6 +439,13 @@
         for(var p in obj)
           str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
         return str.join("&");
+      },
+      selectAll() {
+        this.selected = [];
+        this.header_options.forEach(h => this.selected.push(h));
+      },
+      unselectAll() {
+        this.selected = [];
       }
     },
   }
