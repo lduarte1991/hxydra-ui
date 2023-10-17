@@ -48,7 +48,6 @@
               label="Launched Before"
               prepend-icon="mdi-calendar-month"
               :value="launchBeforeDisplay"
-              :disabled="launch_after != null && launch_after.length > 0"
               clearable
               v-on="on"
               @click:clear="launch_before = ''"
@@ -78,7 +77,6 @@
               label="Launched After"
               prepend-icon="mdi-calendar-month"
               :value="launchAfterDisplay"
-              :disabled="launch_before != null && launch_before.length > 0"
               clearable
               v-on="on"
               @click:clear="launch_after = ''"
@@ -122,7 +120,6 @@
               label="End Before"
               prepend-icon="mdi-calendar-month"
               :value="endBeforeDisplay"
-              :disabled="end_after != null && end_after.length > 0"
               clearable
               v-on="on"
               @click:clear="end_before = ''"
@@ -152,7 +149,6 @@
               label="End After"
               prepend-icon="mdi-calendar-month"
               :value="endAfterDisplay"
-              :disabled="end_before != null && end_before.length > 0"
               clearable
               v-on="on"
               @click:clear="end_after = ''"
