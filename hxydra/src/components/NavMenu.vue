@@ -93,7 +93,7 @@
           v-on="on"
         >
           <v-icon>
-            mdi-download
+            mdi-chart-box-outline
           </v-icon>
         </v-btn>
       </template>
