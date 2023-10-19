@@ -213,8 +213,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="Launch Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="launchDateDisplay"
                       :rules="dateAfterRule"
                       clearable
@@ -222,7 +221,11 @@
                       v-on="on"
                       @click:clear="course.launch_date = ''"
                       @change="launchTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> Launched Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.launch_date"
@@ -246,8 +249,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="End Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="endDateDisplay"
                       :rules="dateBeforeRule"
                       clearable
@@ -255,7 +257,11 @@
                       v-on="on"
                       @click:clear="course.end_date = ''"
                       @change="endTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> End Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.end_date"
@@ -290,8 +296,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="Marketing Launch Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="marketingDateDisplay"
                       clearable
                       :rules="dateRules"
@@ -299,7 +304,11 @@
                       v-on="on"
                       @click:clear="course.marketing_launch_date = ''"
                       @change="marketingTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> Marketing Launched Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.marketing_launch_date"
@@ -324,8 +333,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="Application Open Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="appOpenDateDisplay"
                       clearable
                       :rules="applicationDateAfterRule"
@@ -333,7 +341,11 @@
                       v-on="on"
                       @click:clear="course.application_open_date = ''"
                       @change="appOpenTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> Application Open Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.application_open_date"
@@ -358,8 +370,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="Application Close Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="appCloseDateDisplay"
                       clearable
                       :rules="applicationDateBeforeRule"
@@ -367,7 +378,11 @@
                       v-on="on"
                       @click:clear="course.application_close_date = ''"
                       @change="appCloseTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> Application Close Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.application_close_date"
@@ -394,8 +409,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="Enrollment Close Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="enrollmentCutOffDateDisplay"
                       clearable
                       :rules="dateRules"
@@ -403,7 +417,11 @@
                       v-on="on"
                       @click:clear="course.enrollment_date = ''"
                       @change="enrollmentTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> Enrollment Close Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.enrollment_date"
@@ -428,8 +446,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="Cert Enrollment Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="IDVCutOffDateDisplay"
                       clearable
                       :rules="dateRules"
@@ -437,7 +454,11 @@
                       v-on="on"
                       @click:clear="course.cert_enrollment_date = ''"
                       @change="certEnrollmentTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> Cert Enrollment Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.cert_enrollment_date"
@@ -462,8 +483,7 @@
                 >
                   <template #activator="{ on }">
                     <v-text-field
-                      label="SOW Approval Date"
-                      prepend-icon="mdi-calendar-month"
+                      class="mx-2"
                       :value="sowDateDisplay"
                       clearable
                       :rules="dateRules"
@@ -471,7 +491,11 @@
                       v-on="on"
                       @click:clear="course.sow_approval_date = ''"
                       @change="sowTxtUpdate"
-                    />
+                    >
+                      <template slot="label">
+                        <v-icon>mdi-calendar-month</v-icon> SOW Approval Date
+                      </template>
+                    </v-text-field>
                   </template>
                   <v-date-picker
                     v-model="course.sow_approval_date"
