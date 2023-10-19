@@ -45,14 +45,16 @@
         >
           <template #activator="{ on }">
             <v-text-field
-              label="Launched Before"
-              prepend-icon="mdi-calendar-month"
               :value="launchBeforeDisplay"
               clearable
               v-on="on"
               @click:clear="launch_before = ''"
               @change="launchBeforeTxtUpdate"
-            />
+            >
+              <template slot="label">
+                <v-icon>mdi-calendar-month</v-icon> Launched Before
+              </template>
+            </v-text-field>
           </template>
           <v-date-picker
             v-model="launch_before"
@@ -74,14 +76,16 @@
         >
           <template #activator="{ on }">
             <v-text-field
-              label="Launched After"
-              prepend-icon="mdi-calendar-month"
               :value="launchAfterDisplay"
               clearable
               v-on="on"
               @click:clear="launch_after = ''"
               @change="launchAfterTxtUpdate"
-            />
+            >
+              <template slot="label">
+                <v-icon>mdi-calendar-month</v-icon> Launched After
+              </template>
+            </v-text-field>
           </template>
           <v-date-picker
             v-model="launch_after"
@@ -117,14 +121,16 @@
         >
           <template #activator="{ on }">
             <v-text-field
-              label="End Before"
-              prepend-icon="mdi-calendar-month"
               :value="endBeforeDisplay"
               clearable
               v-on="on"
               @click:clear="end_before = ''"
               @change="endBeforeTxtUpdate"
-            />
+            >
+              <template slot="label">
+                <v-icon>mdi-calendar-month</v-icon> End Before
+              </template>
+            </v-text-field>
           </template>
           <v-date-picker
             v-model="end_before"
@@ -146,14 +152,16 @@
         >
           <template #activator="{ on }">
             <v-text-field
-              label="End After"
-              prepend-icon="mdi-calendar-month"
               :value="endAfterDisplay"
               clearable
               v-on="on"
               @click:clear="end_after = ''"
               @change="endAfterTxtUpdate"
-            />
+            >
+              <template slot="label">
+                <v-icon>mdi-calendar-month</v-icon> End After
+              </template>
+            </v-text-field>
           </template>
           <v-date-picker
             v-model="end_after"
@@ -285,7 +293,7 @@
       exclude_video_archived: false,
       header: '',
       header_options: [],
-      selected: [],
+      selected: ["nickname"],
 
       //download stuff
       progressValue: 0,
