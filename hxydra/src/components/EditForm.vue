@@ -1282,4 +1282,9 @@
   .v-menu__content {
     background: white;
   }
+
+  .v-input.v-input--is-focused .v-icon {
+    color: #1976d2!important;
+    caret-color: #1976d2!important;
+  }
 </style>
