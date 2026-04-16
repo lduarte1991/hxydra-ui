@@ -55,6 +55,12 @@ module.exports = {
       template: 'public/kondo_uniqueprojects.html',
       title: 'Unique Projects List',
       chunks: ['chunk-vendors', 'chunk-common', 'kondo_uniqueprojects']
+    },
+    'kondo_updates': {
+      entry: './src/pages/kondo_updates/main.js',
+      template: 'public/kondo_updates.html',
+      title: 'Updates Report',
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_updates']
     }
   }
 }
