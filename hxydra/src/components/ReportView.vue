@@ -98,7 +98,6 @@
       selected_report_title: "Select Report Above to View Online",
       search: '',
       selected_report_url: "",
-      selected_report_freshest: !(process.env.VUE_APP_SHOW_CACHE_UI == "true"),
     }),
     mounted() {
       // from stackoverflow
@@ -114,12 +113,11 @@
             getVars[tmp[0]] = tmp[1];
         });
         this.selected_report_url = getVars['url']
-        this.selected_report_freshest = getVars['freshest'] == 'true'
         let sortkey = 'sortkey' in getVars ? getVars['sortkey'] : 'None'
         if (sortkey == 'None') {
-          this.viewOnline(this.api_domain + getVars['url'] + '?format=json&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
+          this.viewOnline(this.api_domain + getVars['url'] + '?format=json', decodeURI(getVars['title']))
         } else {
-          this.viewOnline(this.api_domain + getVars['url'] + '?format=json&sortkey=' + sortkey + '&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
+          this.viewOnline(this.api_domain + getVars['url'] + '?format=json&sortkey=' + sortkey, decodeURI(getVars['title']))
         }
       }
     },
@@ -186,8 +184,9 @@
         })
       },
       refresh() {
-        this.selected_report_freshest = true
-        this.viewOnline(this.api_domain + this.selected_report_url + '?format=json&freshest=' + this.selected_report_freshest, this.selected_report_title)
+      //  this.selected_report_freshest = true
+      //  this.viewOnline(this.api_domain + this.selected_report_url + '?format=json&freshest=' + this.selected_report_freshest, this.selected_report_title)
+        console.log("deprecated: refresh report")
       },
       filter (value, search) {
         if (value && search) {

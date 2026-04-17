@@ -174,7 +174,7 @@
       >
         <v-btn
           class="mb-5"
-          :href="'/kondo_reportview/?url=' + encodeURIComponent(viewOnlineURL) + '&title=Updates%20Report&freshest=true'"
+          :href="'/kondo_reportview/?url=' + encodeURIComponent(viewOnlineURL) + '&title=Updates%20Report'"
           :disabled="selected.length == 0"
         >
           <v-icon class="mr-2">
