@@ -210,8 +210,8 @@
       loadProgress: 0,
 
       //api urls
-      api_header_url: process.env.VUE_APP_KONDO_API_URL + 'reportheader/flex_updates/',
-      api_flex_url: process.env.VUE_APP_KONDO_API_URL + 'report/flex_updates/',
+      api_header_url: process.env.VUE_APP_KONDO_API_URL + 'reportheader/flex_updates_sparse/',
+      api_flex_url: process.env.VUE_APP_KONDO_API_URL + 'report/flex_updates_sparse/',
     }),
     computed: {
       startDateDisplay() {
@@ -227,7 +227,7 @@
           end_date: this.end_date != null ? this.end_date : '',
           header: this.selected.join(',')
         }
-        return "/kondo/v1/report/flex_updates/?" + this.serialize(params);
+        return "/kondo/v1/report/flex_updates_sparse/?" + this.serialize(params);
       },
       customReportURLJSON() {
         let params = {
@@ -236,7 +236,7 @@
           end_date: this.end_date != null ? this.end_date : '',
           header: this.selected.join(',')
         }
-        return this.api_flex_url + "?" + this.serialize(params); 
+        return this.api_flex_url + "?" + this.serialize(params);
       },
       customReportURLCSV() {
         let params = {
@@ -245,8 +245,8 @@
           end_date: this.end_date != null ? this.end_date : '',
           header: this.selected.join(',')
         }
-        return this.api_flex_url + "?" + this.serialize(params); 
-      }
+        return this.api_flex_url + "?" + this.serialize(params);
+      },
     },
     mounted() {
       this.getHeaders();
@@ -269,9 +269,8 @@
         } else {
           this.downloadUrl(this.customReportURLJSON)
         }
-        
       },
-      async downloadUrl(url) {
+      async downloadUrl(url, format) {
         // should trigger message "Requesting report. Wait a moment..."
         this.downloadBox = true
         this.progressMessage = 'Requesting report. This may take a few minutes...'
