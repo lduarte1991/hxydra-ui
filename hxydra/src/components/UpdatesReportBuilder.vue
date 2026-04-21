@@ -102,6 +102,19 @@
       <v-col
         class="col-12"
       >
+        <v-checkbox
+          v-model="useSparse"
+          label="Use Sparse (display only updated values)"
+        />
+      </v-col>
+    </v-row>
+    <v-row
+      wrap
+      class="mx-5"
+    >
+      <v-col
+        class="col-12"
+      >
         <h3>Columns to Include</h3>
       </v-col>
       <v-col
@@ -174,7 +187,7 @@
       >
         <v-btn
           class="mb-5"
-          :href="'/kondo_reportview/?url=' + encodeURIComponent(viewOnlineURL) + '&title=Updates%20Report'"
+          :href="'/kondo_reportview/?url=' + encodeURIComponent(viewOnlineURL(useSparse)) + '&title=Updates%20Report'"
           :disabled="selected.length == 0"
         >
           <v-icon class="mr-2">
@@ -200,6 +213,7 @@
       header: '',
       header_options: [],
       selected: ["nickname"],
+      useSparse: false,
 
       //download stuff
       progressValue: 0,
@@ -211,7 +225,6 @@
 
       //api urls
       api_header_url: process.env.VUE_APP_KONDO_API_URL + 'reportheader/flex_updates_sparse/',
-      api_flex_url: process.env.VUE_APP_KONDO_API_URL + 'report/flex_updates_sparse/',
     }),
     computed: {
       startDateDisplay() {
@@ -219,34 +232,7 @@
       },
       endDateDisplay() {
         return this.getDate(this.end_date)
-      },
-      viewOnlineURL() {
-        let params = {
-          format: "json",
-          start_date: this.start_date != null ? this.start_date : '',
-          end_date: this.end_date != null ? this.end_date : '',
-          header: this.selected.join(',')
-        }
-        return "/kondo/v1/report/flex_updates_sparse/?" + this.serialize(params);
-      },
-      customReportURLJSON() {
-        let params = {
-          format: "json",
-          start_date: this.start_date != null ? this.start_date : '',
-          end_date: this.end_date != null ? this.end_date : '',
-          header: this.selected.join(',')
-        }
-        return this.api_flex_url + "?" + this.serialize(params);
-      },
-      customReportURLCSV() {
-        let params = {
-          format: "csv",
-          start_date: this.start_date != null ? this.start_date : '',
-          end_date: this.end_date != null ? this.end_date : '',
-          header: this.selected.join(',')
-        }
-        return this.api_flex_url + "?" + this.serialize(params);
-      },
+      }
     },
     mounted() {
       this.getHeaders();
@@ -263,14 +249,30 @@
           self.header_options = response.data
         });
       },
-      async makeReport(format) {
-        if (format == "csv") {
-          this.downloadUrl(this.customReportURLCSV)
-        } else {
-          this.downloadUrl(this.customReportURLJSON)
+      viewOnlineURL(useSparse = false) {
+        const baseUrl = useSparse ? '/kondo/v1/report/flex_updates_sparse/?' : '/kondo/v1/report/flex_updates/?'
+        let params = {
+          format: "json",
+          start_date: this.start_date != null ? this.start_date : '',
+          end_date: this.end_date != null ? this.end_date : '',
+          header: this.selected.join(',')
         }
+        return baseUrl + this.serialize(params)
       },
-      async downloadUrl(url, format) {
+      async makeReport(format) {
+        const baseUrl = this.useSparse
+          ? process.env.VUE_APP_KONDO_API_URL + 'report/flex_updates_sparse/'
+          : process.env.VUE_APP_KONDO_API_URL + 'report/flex_updates/'
+
+        let params = {
+          format: format,
+          start_date: this.start_date != null ? this.start_date : '',
+          end_date: this.end_date != null ? this.end_date : '',
+          header: this.selected.join(',')
+        }
+        this.downloadUrl(baseUrl, params)
+      },
+      async downloadUrl(url, params) {
         // should trigger message "Requesting report. Wait a moment..."
         this.downloadBox = true
         this.progressMessage = 'Requesting report. This may take a few minutes...'
@@ -282,6 +284,7 @@
         await axios.get(
           url,
           {
+            params: params,
             onDownloadProgress: progressEvent => {
               const total = progressEvent.total
               const current = progressEvent.loaded

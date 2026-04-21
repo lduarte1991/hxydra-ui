@@ -106,32 +106,21 @@
       let uri = window.location.href.split('?');
       let resultview = this.extractQueryParams(window.location.href)
 
-      /*
-      if(uri.length == 2) {
-        let vars = uri[1].split('&');
-        let getVars = {};
-        let tmp = '';
-        vars.forEach(function(v) {
-          tmp = v.split('=');
-          if(tmp.length == 2)
-            getVars[tmp[0]] = tmp[1];
-        });
-      }
-      */
       if (resultview.length == 2) {
         let paramsview = resultview[1];
         let report_title = 'title' in paramsview ? paramsview['title']: this.selected_report_title;
 
         let resultapi = this.extractQueryParams(paramsview["url"]);
-        let paramsapi = resultapi[1];
-        paramsapi['format'] = 'json';  // ensure the response is json
+        let paramsapi = {'format': 'json'};  // ensure the response is json
+
+        if (resultapi.length == 2) {
+            paramsapi = { ...resultapi[1], ...paramsapi };
+        }
 
         let sortkey = 'sortkey' in paramsapi ? paramsapi['sortkey'] : 'None';
         if (sortkey == 'None') {
           paramsapi['sortkey'] = "nickname";  // force sorting by nickname
         }
-
-        console.log("------- path(" + resultapi[0] + ") params(" + paramsapi + ")");
 
         this.viewOnline(resultapi[0], paramsapi, report_title);
       }
@@ -141,7 +130,7 @@
       // returns urldecoded input_uri path and params
       // assumes that input_uri *always* has querystring params
         const uri = input_uri.split('?')
-        if (uri.length !== 2) return [];
+        if (uri.length !== 2) return [uri, {}];
 
         const params = {};
         uri[1].split('&').forEach(pair => {
@@ -158,20 +147,10 @@
         this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0";
         this.tableData = [];
         this.tableHeaders = [];
-        /*
-        let urlLink = urlLink1
-        if (urlLink1.indexOf('flex') > -1) {
-          urlLink = decodeURIComponent(urlLink1.replace('format=json&',''))
-        }
-        */
+
         if (!axios) {
           return;
         }
-
-        console.log("******* path(" + path + ")");
-        console.log("******* params(" + queryparams + ")");
-        console.log("******* title(" + selected_report + ")");
-
         await axios.get(
           path,
           {
