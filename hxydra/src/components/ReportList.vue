@@ -70,7 +70,7 @@
             align="center"
           >
             <v-btn
-              @click="downloadUrl(api_domain + item.url + '?format=csv' + (item.description == 'Finance Report For All Projects' ? '&sortkey=nick' : '') + '&freshest=' + freshest, item.description + '.csv')"
+              @click="downloadUrl(api_domain + item.url + '?format=csv' + (item.description == 'Finance Report For All Projects' ? '&sortkey=nick' : ''), item.description + '.csv')"
             >
               <v-icon>mdi-download</v-icon> CSV
             </v-btn>
@@ -87,7 +87,7 @@
             align="center"
           >
             <v-btn
-              @click="downloadUrl(api_domain + item.url + '?format=json'+ (item.description == 'Finance Report For All Projects' ? '&sortkey=nick' : '') +'&freshest=' + freshest, item.description + '.json')"
+              @click="downloadUrl(api_domain + item.url + '?format=json'+ (item.description == 'Finance Report For All Projects' ? '&sortkey=nick' : ''), item.description + '.json')"
             >
               <v-icon>mdi-download</v-icon> JSON
             </v-btn>
@@ -104,7 +104,7 @@
             align="center"
           >
             <v-btn
-              :href="'/kondo_reportview/?url=' + item.url + '&title=' + item.description + (item.description == 'Finance Report For All Projects' ? '&sortkey=nick' : '') + '&freshest=' + freshest"
+              :href="'/kondo_reportview/?url=' + item.url + '&title=' + item.description + (item.description == 'Finance Report For All Projects' ? '&sortkey=nick' : '')"
             >
               <v-icon class="mr-2">
                 mdi-eye

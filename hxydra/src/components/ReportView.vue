@@ -98,49 +98,63 @@
       selected_report_title: "Select Report Above to View Online",
       search: '',
       selected_report_url: "",
-      selected_report_freshest: !(process.env.VUE_APP_SHOW_CACHE_UI == "true"),
+      api_report_url: "",
     }),
     mounted() {
       // from stackoverflow
       // https://stackoverflow.com/questions/35914069/how-can-i-get-query-parameters-from-a-url-in-vue-js
       let uri = window.location.href.split('?');
-      if(uri.length == 2) {
-        let vars = uri[1].split('&');
-        let getVars = {};
-        let tmp = '';
-        vars.forEach(function(v) {
-          tmp = v.split('=');
-          if(tmp.length == 2)
-            getVars[tmp[0]] = tmp[1];
-        });
-        this.selected_report_url = getVars['url']
-        this.selected_report_freshest = getVars['freshest'] == 'true'
-        let sortkey = 'sortkey' in getVars ? getVars['sortkey'] : 'None'
-        if (sortkey == 'None') {
-          this.viewOnline(this.api_domain + getVars['url'] + '?format=json&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
-        } else {
-          this.viewOnline(this.api_domain + getVars['url'] + '?format=json&sortkey=' + sortkey + '&freshest=' + getVars['freshest'], decodeURI(getVars['title']))
+      let resultview = this.extractQueryParams(window.location.href)
+
+      if (resultview.length == 2) {
+        let paramsview = resultview[1];
+        let report_title = 'title' in paramsview ? paramsview['title']: this.selected_report_title;
+
+        let resultapi = this.extractQueryParams(paramsview["url"]);
+        let paramsapi = {'format': 'json'};  // ensure the response is json
+
+        if (resultapi.length == 2) {
+            paramsapi = { ...resultapi[1], ...paramsapi };
         }
+
+        let sortkey = 'sortkey' in paramsapi ? paramsapi['sortkey'] : 'None';
+        if (sortkey == 'None') {
+          paramsapi['sortkey'] = "nickname";  // force sorting by nickname
+        }
+
+        this.viewOnline(resultapi[0], paramsapi, report_title);
       }
     },
     methods: {
-      async viewOnline(urlLink1, selected_report) {
-        this.selected_report_title = selected_report
-        this.loading = true
-        this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0"
-        this.tableData = []
-        this.tableHeaders = []
-        let urlLink = urlLink1
-        if (urlLink1.indexOf('flex%2F') > -1) {
-          urlLink = decodeURIComponent(urlLink1.replace('?format=json',''))
-        }
-        if (!axios) {
-          return
-        }
+      extractQueryParams(input_uri) {
+      // returns urldecoded input_uri path and params
+      // assumes that input_uri *always* has querystring params
+        const uri = input_uri.split('?')
+        if (uri.length !== 2) return [uri, {}];
 
+        const params = {};
+        uri[1].split('&').forEach(pair => {
+          const [key, value] = pair.split('=');
+          if (value) params[key] = decodeURIComponent(value);
+        });
+        return [uri[0], params];
+      },
+
+      //async viewOnline(urlLink1, selected_report) {
+      async viewOnline(path, queryparams, selected_report) {
+        this.selected_report_title = selected_report;
+        this.loading = true;
+        this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0";
+        this.tableData = [];
+        this.tableHeaders = [];
+
+        if (!axios) {
+          return;
+        }
         await axios.get(
-          urlLink,
+          path,
           {
+            params: queryparams,
             onDownloadProgress: progressEvent => {
               const total = progressEvent.total
               const current = progressEvent.loaded
@@ -186,8 +200,9 @@
         })
       },
       refresh() {
-        this.selected_report_freshest = true
-        this.viewOnline(this.api_domain + this.selected_report_url + '?format=json&freshest=' + this.selected_report_freshest, this.selected_report_title)
+      //  this.selected_report_freshest = true
+      //  this.viewOnline(this.api_domain + this.selected_report_url + '?format=json&freshest=' + this.selected_report_freshest, this.selected_report_title)
+        console.log("deprecated: refresh report")
       },
       filter (value, search) {
         if (value && search) {

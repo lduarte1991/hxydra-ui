@@ -42,7 +42,7 @@ module.exports = {
       entry: './src/pages/kondo_customreport/main.js',
       template: 'public/kondo_customreport.html',
       title: 'Custom Report',
-      chunks: ['chunks-vendors', 'chunk-common', 'kondo_customreport']
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_customreport']
     },
     'kondo_reportview': {
       entry: './src/pages/kondo_reportview/main.js',
@@ -55,6 +55,12 @@ module.exports = {
       template: 'public/kondo_uniqueprojects.html',
       title: 'Unique Projects List',
       chunks: ['chunk-vendors', 'chunk-common', 'kondo_uniqueprojects']
+    },
+    'kondo_updates': {
+      entry: './src/pages/kondo_updates/main.js',
+      template: 'public/kondo_updates.html',
+      title: 'Updates Report',
+      chunks: ['chunk-vendors', 'chunk-common', 'kondo_updates']
     }
   }
 }
