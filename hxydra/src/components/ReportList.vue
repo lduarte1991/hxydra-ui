@@ -157,7 +157,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import http from '@/http'
   export default {
     name: 'ReportList',
     components: {
@@ -201,10 +201,10 @@
     methods: {
       async getReports () {
         const self = this
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.get(
+        await http.get(
           self.api_url
         )
           .then(data => {
@@ -222,11 +222,11 @@
         this.downloadBox = true
         this.progressMessage = 'Requesting report. This may take a few minutes...'
         this.progressValue = 0
-        if (!axios) {
+        if (!http) {
           return
         }
 
-        await axios.get(
+        await http.get(
           url,
           {
             onDownloadProgress: progressEvent => {
@@ -264,11 +264,11 @@
       //   this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0"
       //   this.tableData = []
       //   this.tableHeaders = []
-      //   if (!axios) {
+      //   if (!http) {
       //     return
       //   }
 
-      //   await axios.get(
+      //   await http.get(
       //     urlLink,
       //     {
       //       onDownloadProgress: progressEvent => {

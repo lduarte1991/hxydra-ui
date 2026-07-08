@@ -243,7 +243,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import http from '@/http'
   export default {
     name: 'CreateForm',
 
@@ -352,7 +352,7 @@
         }
       },
       getCommonNames () {
-        axios.get(this.api_base + 'projectcommonname/')
+        http.get(this.api_base + 'projectcommonname/')
           .then(data => {
             this.commonNames = data.data.map(e => e.name)
           })
@@ -385,7 +385,7 @@
             common_name: this.common_project_name
           }
           let self = this
-          axios.post(
+          http.post(
             this.api_url,
             options
           )

@@ -225,7 +225,7 @@
 <script>
   import EditForm from './EditForm'
   import DetailView from './DetailView'
-  import axios from 'axios'
+  import http from '@/http'
   import getPermissionsFromCookie from '../resources/permissions';
 
   // let perms = false
@@ -306,10 +306,10 @@
       },
       async getProjects () {
         const self = this
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.get(
+        await http.get(
           self.api_projects_url
         )
           .then(data => {
@@ -345,10 +345,10 @@
       },
       async getItemDetail ( item ) {
         const self = this
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.get(
+        await http.get(
           self.api_projects_url + item.nickname
           + '/?permission=true'
         )
@@ -380,10 +380,10 @@
           return
         }
         const self = this;
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.delete(
+        await http.delete(
           self.api_projects_url + item.nickname
           + '/'
         )
@@ -401,10 +401,10 @@
           return
         }
         const self = this;
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.post(
+        await http.post(
           self.api_copy_project_url + 'sequence/' + item.nickname + '/'
         )
           .then((data) => self.selected = data.data)
@@ -414,7 +414,7 @@
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
               if(confirm("Project is not most recent instance. Are you sure you want to create new sequence from this older instance?")) {
-                axios.post(
+                http.post(
                   self.api_copy_project_url + 'sequence/' + item.nickname + '/?yis=true'
                 )
                   .then((data) => self.selected = data.data)
@@ -431,10 +431,10 @@
           return
         }
         const self = this;
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.post(
+        await http.post(
           self.api_copy_project_url + 'version/' + item.nickname + '/'
         )
           .then((data) => this.selected = data.data)
@@ -444,7 +444,7 @@
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
               if(confirm("Project is not most recent instance. Are you sure you want to create new version from this older instance?")) {
-                axios.post(
+                http.post(
                   self.api_copy_project_url + 'version/' + item.nickname + '/?yis=true'
                 )
                   .then((data) => self.selected = data.data)
@@ -461,10 +461,10 @@
           return
         }
         const self = this;
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.post(
+        await http.post(
           self.api_copy_project_url + 'run/' + item.nickname + '/'
         )
           .then((data) => this.selected = data.data)
@@ -474,7 +474,7 @@
             if (e.response.data.message[0].indexOf('not most recent') > -1) {
               // show pop up
               if(confirm("Project is not most recent run. Are you sure you want to create new run from this older instance?")) {
-                axios.post(
+                http.post(
                   self.api_copy_project_url + 'run/' + item.nickname + '/?yis=true'
                 )
                   .then((data) => self.selected = data.data)

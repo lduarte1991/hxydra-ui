@@ -143,7 +143,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import http from '@/http'
   import getPermissionsFromCookie from '../resources/permissions';
 
   export default {
@@ -235,10 +235,10 @@
       },
       async getUniqueProjects () {
         const self = this
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.get(
+        await http.get(
           self.api_uniqueprojects_url
         )
           .then(data => {
@@ -253,10 +253,10 @@
       },
       async getItemDetail ( item ) {
         const self = this
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.get(
+        await http.get(
           self.api_uniqueprojects_url + item.prefix + '/' + item.sequence + '/?permission=true'
         )
           .then(data => self.selected = data.data)
@@ -290,10 +290,10 @@
       async archiveChanged (item, selection) {
         const self = this
         console.log(item.video_archived)
-        if (!axios) {
+        if (!http) {
           return
         }
-        await axios.patch(
+        await http.patch(
           self.api_projects_url + "project/" + item.nickname + '/', {
             video_archived: item.video_archived,
             prefix: item.prefix,

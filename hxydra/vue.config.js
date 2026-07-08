@@ -1,5 +1,27 @@
 module.exports = {
   publicPath: process.env.VUE_APP_STATIC_URL,
+  devServer: {
+    proxy: {
+      '/kondo/': {
+        target: process.env.KONDO_PROXY_TARGET,
+        changeOrigin: true,
+        onProxyReq(proxyReq) {
+          if (process.env.DEV_SESSION_COOKIE) {
+            proxyReq.setHeader('Cookie', `sessionid=${process.env.DEV_SESSION_COOKIE}; hx-perms=${process.env.DEV_HX_PERMS_COOKIE}`)
+          }
+        }
+      },
+      '/lti_init/': {
+        target: process.env.HXAT_PROXY_TARGET,
+        changeOrigin: true,
+        onProxyReq(proxyReq) {
+          if (process.env.VUE_APP_HXAT_API_KEY) {
+            proxyReq.setHeader('Authorization', `Bearer ${process.env.VUE_APP_HXAT_API_KEY}`)
+          }
+        }
+      }
+    }
+  },
   assetsDir: 'static/kondo',
   css: {
     extract: { ignoreOrder: true },

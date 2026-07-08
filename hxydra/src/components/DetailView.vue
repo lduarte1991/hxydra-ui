@@ -203,6 +203,11 @@
                 >
                   Discipline/edX Subject
                 </v-tab>
+                <v-tab
+                  key="credentials"
+                >
+                  Credentials
+                </v-tab>
               </v-tabs>
             </template>
           </v-toolbar>
@@ -490,6 +495,68 @@
                 </v-card-text>
               </v-card>
             </v-tab-item>
+            <v-tab-item
+              key="credentials"
+            >
+              <v-card flat>
+                <v-card-text>
+                  <div v-if="!credentialLoading && credential === null && !credentialNotFound">
+                    <v-btn @click="fetchCredentials">
+                      Fetch LTI Credentials
+                    </v-btn>
+                  </div>
+                  <div
+                    v-if="credentialLoading"
+                    class="text-center py-4"
+                  >
+                    <v-progress-circular indeterminate />
+                  </div>
+                  <div v-else-if="credentialNotFound">
+                    No credentials exist for this course. Please contact the tech team for help.
+                  </div>
+                  <v-container v-else-if="credential">
+                    <v-row align="center">
+                      <v-col class="text-caption col-2">
+                        LTI Key:
+                      </v-col>
+                      <v-col class="col-8">
+                        {{ credential.lti_key }}
+                      </v-col>
+                      <v-col class="col-2">
+                        <v-btn
+                          icon
+                          small
+                          @click="copyToClipboard(credential.lti_key, 'key')"
+                        >
+                          <v-icon small>
+                            {{ credentialCopied === 'key' ? 'mdi-check' : 'mdi-content-copy' }}
+                          </v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                    <v-row align="center">
+                      <v-col class="text-caption col-2">
+                        LTI Secret:
+                      </v-col>
+                      <v-col class="col-8">
+                        {{ credential.lti_secret }}
+                      </v-col>
+                      <v-col class="col-2">
+                        <v-btn
+                          icon
+                          small
+                          @click="copyToClipboard(credential.lti_secret, 'secret')"
+                        >
+                          <v-icon small>
+                            {{ credentialCopied === 'secret' ? 'mdi-check' : 'mdi-content-copy' }}
+                          </v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -498,6 +565,8 @@
 </template>
 
 <script>
+import http from '@/http'
+
 let perms = false
 try {
   const cookie = document.cookie
@@ -524,6 +593,11 @@ try {
     data: () => ({
       searchTeam: '',
       write_perm: perms,
+      credential: null,
+      credentialLoading: false,
+      credentialNotFound: false,
+      credentialCopied: '',
+      api_credential_url: process.env.VUE_APP_HXAT_API_URL + 'course/',
       teamHeaders: [{
         text: 'Name',
         sortable: true,
@@ -576,6 +650,14 @@ try {
       //   types: [],
       // }
     }),
+    watch: {
+      'course.program_id'() {
+        this.credential = null
+        this.credentialNotFound = false
+        this.credentialLoading = false
+        this.credentialCopied = ''
+      }
+    },
     methods: {
       filter (value, search) {
         return value != null &&
@@ -593,6 +675,31 @@ try {
         const regEx = /_v([0-9]+)/g
         const arr = [...nickname.matchAll(regEx)]
         return arr[0][1];
+      },
+      async fetchCredentials() {
+        this.credential = null
+        this.credentialNotFound = false
+        this.credentialLoading = true
+        this.credentialCopied = ''
+        try {
+          const { data } = await http.get(
+            this.api_credential_url + this.course.program_id + '/credential/',
+            { headers: { Authorization: `Bearer ${process.env.VUE_APP_HXAT_API_KEY}` } }
+          )
+          this.credential = data
+        } catch (e) {
+          if (e.response && e.response.status === 404) {
+            this.credentialNotFound = true
+          }
+        } finally {
+          this.credentialLoading = false
+        }
+      },
+      copyToClipboard(text, field) {
+        navigator.clipboard.writeText(text).then(() => {
+          this.credentialCopied = field
+          setTimeout(() => { this.credentialCopied = '' }, 2000)
+        })
       }
     },
   }
