@@ -204,6 +204,7 @@
                   Discipline/edX Subject
                 </v-tab>
                 <v-tab
+                  v-if="canAccessCredentials"
                   key="credentials"
                 >
                   Credentials
@@ -496,6 +497,7 @@
               </v-card>
             </v-tab-item>
             <v-tab-item
+              v-if="canAccessCredentials"
               key="credentials"
             >
               <v-card flat>
@@ -512,9 +514,18 @@
                     <v-progress-circular indeterminate />
                   </div>
                   <div v-else-if="credentialNotFound">
-                    No credentials exist for this course. Please contact the tech team for help.
+                    <div>No credentials exist for this course.</div>
+                    <v-btn
+                      class="mt-2"
+                      @click="requestCredentials"
+                    >
+                      Request Credentials
+                    </v-btn>
                   </div>
-                  <v-container v-else-if="credential">
+                  <div v-else-if="credential && !credential.approved">
+                    {{ credential.message }}
+                  </div>
+                  <v-container v-else-if="credential && credential.approved">
                     <v-row align="center">
                       <v-col class="text-caption col-2">
                         LTI Key:
@@ -566,20 +577,8 @@
 
 <script>
 import http from '@/http'
+import getPermissionsFromCookie from '@/resources/permissions'
 
-let perms = false
-try {
-  const cookie = document.cookie
-  if (typeof(cookie) !== "undefined") {
-    let cookie_split = cookie.split(';').map(x => x.split('='))
-    let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
-    if (perm_cookie_val.length > 0) {
-      perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
-    }
-  }
-} catch {
-  perms = false
-}
   export default {
     name: 'EditForm',
     props: {
@@ -592,12 +591,13 @@ try {
     },
     data: () => ({
       searchTeam: '',
-      write_perm: perms,
+      write_perm: getPermissionsFromCookie(),
       credential: null,
       credentialLoading: false,
       credentialNotFound: false,
       credentialCopied: '',
       api_credential_url: process.env.VUE_APP_HXAT_API_URL + 'course/',
+      kondo_api_url: process.env.VUE_APP_KONDO_API_URL,
       teamHeaders: [{
         text: 'Name',
         sortable: true,
@@ -650,12 +650,25 @@ try {
       //   types: [],
       // }
     }),
+    computed: {
+      canAccessCredentials() {
+        return this.write_perm.credentials
+      }
+    },
     watch: {
       'course.program_id'() {
         this.credential = null
         this.credentialNotFound = false
         this.credentialLoading = false
         this.credentialCopied = ''
+      },
+      tab(newTab) {
+        if (newTab === 3) {
+          this.credential = null
+          this.credentialNotFound = false
+          this.credentialLoading = false
+          this.credentialCopied = ''
+        }
       }
     },
     methods: {
@@ -693,6 +706,59 @@ try {
           }
         } finally {
           this.credentialLoading = false
+        }
+      },
+      async requestCredentials() {
+        this.credentialNotFound = false
+        this.credentialLoading = true
+        this.credentialCopied = ''
+        try {
+          const body = { course_name: `${this.course.title} ${this.course.program_run}` }
+          const previousCourseId = await this.getPreviousCourseId()
+          if (previousCourseId) {
+            body.previous_course_id = previousCourseId
+          }
+          const { data } = await http.post(
+            this.api_credential_url + this.course.program_id + '/credential/',
+            body,
+            { headers: { Authorization: `Bearer ${process.env.VUE_APP_HXAT_API_KEY}` } }
+          )
+          this.credential = data
+        } catch (e) {
+          this.credentialNotFound = true
+        } finally {
+          this.credentialLoading = false
+        }
+      },
+      async getPreviousCourseId() {
+        try {
+          const { data } = await http.get(
+            this.kondo_api_url + 'projectps/' + this.course.prefix + '/' + this.course.sequence + '/?permission=true'
+          )
+          const all = data.projects
+          const currentVersion = this.course.version
+          const currentRun = this.course.run
+
+          let predecessorNickname = null
+          if (currentRun > 0) {
+            const pred = all.find(p => p.version === currentVersion && p.run === currentRun - 1)
+            if (pred) predecessorNickname = pred.nickname
+          } else if (currentVersion > 1) {
+            const prevVersionCourses = all.filter(p => p.version === currentVersion - 1)
+            if (prevVersionCourses.length > 0) {
+              const pred = prevVersionCourses.reduce((a, b) => a.run > b.run ? a : b)
+              predecessorNickname = pred.nickname
+            }
+          }
+
+          if (!predecessorNickname) return null
+
+          const detail = await http.get(
+            this.kondo_api_url + 'project/' + predecessorNickname + '/?permission=true'
+          )
+          return detail.data.program_id || null
+        } catch {
+          return null
         }
       },
       copyToClipboard(text, field) {

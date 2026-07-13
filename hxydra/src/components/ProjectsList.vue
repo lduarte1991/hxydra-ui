@@ -295,6 +295,13 @@
     mounted() {
       this.getProjects();
     },
+    watch: {
+      detail(isOpen) {
+        if (!isOpen) {
+          this.selected = undefined
+        }
+      }
+    },
     methods: {
       filter (value, search) {
         if (value && search) {
