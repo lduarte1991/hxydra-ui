@@ -502,69 +502,77 @@
             >
               <v-card flat>
                 <v-card-text>
-                  <div v-if="!credentialLoading && credential === null && !credentialNotFound">
-                    <v-btn @click="fetchCredentials">
-                      Fetch LTI Credentials
-                    </v-btn>
-                  </div>
-                  <div
-                    v-if="credentialLoading"
-                    class="text-center py-4"
-                  >
-                    <v-progress-circular indeterminate />
-                  </div>
-                  <div v-else-if="credentialNotFound">
-                    <div>No credentials exist for this course.</div>
-                    <v-btn
-                      class="mt-2"
-                      @click="requestCredentials"
+                  <div class="credential-section">
+                    <h3 class="credential-section__heading">
+                      HxAT LTI Credentials
+                    </h3>
+                    <div v-if="!credentialLoading && credential === null && !credentialNotFound">
+                      <v-btn @click="fetchCredentials">
+                        Fetch HxAT LTI Credentials
+                      </v-btn>
+                    </div>
+                    <div
+                      v-if="credentialLoading"
+                      class="text-center py-4"
                     >
-                      Request Credentials
-                    </v-btn>
+                      <v-progress-circular indeterminate />
+                    </div>
+                    <div v-else-if="credentialNotFound">
+                      <div>No credentials exist for this course.</div>
+                      <v-btn
+                        class="mt-2"
+                        @click="requestCredentials"
+                      >
+                        Request Credentials
+                      </v-btn>
+                    </div>
+                    <div v-else-if="credential && !credential.approved">
+                      {{ credential.message }}
+                    </div>
+                    <v-container
+                      v-else-if="credential && credential.approved"
+                      class="pa-0"
+                    >
+                      <v-row align="center">
+                        <v-col class="text-caption col-2">
+                          HxAT LTI Key:
+                        </v-col>
+                        <v-col class="col-8">
+                          {{ credential.lti_key }}
+                        </v-col>
+                        <v-col class="col-2">
+                          <v-btn
+                            icon
+                            small
+                            @click="copyToClipboard(credential.lti_key, 'key')"
+                          >
+                            <v-icon small>
+                              {{ credentialCopied === 'key' ? 'mdi-check' : 'mdi-content-copy' }}
+                            </v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <v-row align="center">
+                        <v-col class="text-caption col-2">
+                          HxAT LTI Secret:
+                        </v-col>
+                        <v-col class="col-8">
+                          {{ credential.lti_secret }}
+                        </v-col>
+                        <v-col class="col-2">
+                          <v-btn
+                            icon
+                            small
+                            @click="copyToClipboard(credential.lti_secret, 'secret')"
+                          >
+                            <v-icon small>
+                              {{ credentialCopied === 'secret' ? 'mdi-check' : 'mdi-content-copy' }}
+                            </v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </div>
-                  <div v-else-if="credential && !credential.approved">
-                    {{ credential.message }}
-                  </div>
-                  <v-container v-else-if="credential && credential.approved">
-                    <v-row align="center">
-                      <v-col class="text-caption col-2">
-                        LTI Key:
-                      </v-col>
-                      <v-col class="col-8">
-                        {{ credential.lti_key }}
-                      </v-col>
-                      <v-col class="col-2">
-                        <v-btn
-                          icon
-                          small
-                          @click="copyToClipboard(credential.lti_key, 'key')"
-                        >
-                          <v-icon small>
-                            {{ credentialCopied === 'key' ? 'mdi-check' : 'mdi-content-copy' }}
-                          </v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                    <v-row align="center">
-                      <v-col class="text-caption col-2">
-                        LTI Secret:
-                      </v-col>
-                      <v-col class="col-8">
-                        {{ credential.lti_secret }}
-                      </v-col>
-                      <v-col class="col-2">
-                        <v-btn
-                          icon
-                          small
-                          @click="copyToClipboard(credential.lti_secret, 'secret')"
-                        >
-                          <v-icon small>
-                            {{ credentialCopied === 'secret' ? 'mdi-check' : 'mdi-content-copy' }}
-                          </v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-container>
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -770,3 +778,20 @@ import getPermissionsFromCookie from '@/resources/permissions'
     },
   }
 </script>
+
+<style scoped>
+.credential-section {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  padding: 16px 20px;
+}
+
+.credential-section__heading {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: rgba(0, 0, 0, 0.76);
+}
+</style>
