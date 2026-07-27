@@ -190,22 +190,26 @@
 
                 <v-tab
                   key="details"
+                  tab-value="details"
                 >
                   Details
                 </v-tab>
                 <v-tab
                   key="team"
+                  tab-value="team"
                 >
                   Team
                 </v-tab>
                 <v-tab
                   key="dissub"
+                  tab-value="dissub"
                 >
                   Discipline/edX Subject
                 </v-tab>
                 <v-tab
                   v-if="canAccessCredentials"
                   key="credentials"
+                  tab-value="credentials"
                 >
                   Credentials
                 </v-tab>
@@ -215,6 +219,7 @@
           <v-tabs-items v-model="tab">
             <v-tab-item
               key="details"
+              value="details"
             >
               <v-card flat>
                 <v-container>
@@ -439,6 +444,7 @@
             </v-tab-item>
             <v-tab-item
               key="team"
+              value="team"
             >
               <v-card flat>
                 <v-data-table
@@ -474,6 +480,7 @@
             </v-tab-item>
             <v-tab-item
               key="dissub"
+              value="dissub"
             >
               <v-card flat>
                 <v-card-text>
@@ -499,6 +506,7 @@
             <v-tab-item
               v-if="canAccessCredentials"
               key="credentials"
+              value="credentials"
             >
               <v-card flat>
                 <v-card-text>
@@ -531,7 +539,10 @@
                       >
                         Request Credentials
                       </v-btn>
-                      <div v-if="!hasValidCourseId" class="text-caption mt-1">
+                      <div
+                        v-if="!hasValidCourseId"
+                        class="text-caption mt-1"
+                      >
                         No course ID is associated with this course.
                       </div>
                     </div>
@@ -582,15 +593,24 @@
                           </v-btn>
                         </v-col>
                       </v-row>
-                      <div v-if="clipboardUnavailable" class="text-caption mt-2">
+                      <div
+                        v-if="clipboardUnavailable"
+                        class="text-caption mt-2"
+                      >
                         Clipboard access is unavailable. Please highlight the text above and copy manually.
                       </div>
                     </v-container>
                     <div v-else>
-                      <v-btn :disabled="!hasValidCourseId" @click="fetchCredentials">
+                      <v-btn
+                        :disabled="!hasValidCourseId"
+                        @click="fetchCredentials"
+                      >
                         Fetch HxAT LTI Credentials
                       </v-btn>
-                      <div v-if="!hasValidCourseId" class="text-caption mt-1">
+                      <div
+                        v-if="!hasValidCourseId"
+                        class="text-caption mt-1"
+                      >
                         No course ID is associated with this course.
                       </div>
                     </div>
@@ -608,8 +628,6 @@
 <script>
 import http from '@/http'
 import getPermissionsFromCookie from '@/resources/permissions'
-
-const CREDENTIALS_TAB_INDEX = 3
 
   export default {
     name: 'EditForm',
@@ -702,7 +720,7 @@ const CREDENTIALS_TAB_INDEX = 3
         this.clipboardUnavailable = false
       },
       tab(newTab) {
-        if (newTab === CREDENTIALS_TAB_INDEX) {
+        if (newTab === 'credentials') {
           this.credential = null
           this.credentialNotFound = false
           this.credentialError = null

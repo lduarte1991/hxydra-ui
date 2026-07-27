@@ -292,15 +292,15 @@
       api_copy_project_url: process.env.VUE_APP_KONDO_API_URL + 'copy/',
       projects: [],
     }),
-    mounted() {
-      this.getProjects();
-    },
     watch: {
       detail(isOpen) {
         if (!isOpen && !this.editing) {
           this.selected = undefined
         }
       }
+    },
+    mounted() {
+      this.getProjects();
     },
     methods: {
       filter (value, search) {

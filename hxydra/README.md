@@ -52,4 +52,4 @@ The webpack dev server handles this automatically in local development via `vue.
 
 ### Credentials tab access control
 
-The credentials tab in the Detail View is gated by the `credentials` permission in the `hx-perms` cookie. Django controls what permissions are written into that cookie for each user. Only users whose `hx-perms` cookie includes `credentials: true` will see the tab.
+The credentials tab in the Detail View is gated by the `credentials` permission in the `hx-perms` cookie. Django controls what permissions are written into that cookie for each user. Only users whose `hx-perms` cookie includes `kondo-admin` or `kondo-it` will see the tab.

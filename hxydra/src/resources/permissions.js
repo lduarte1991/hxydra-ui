@@ -11,7 +11,7 @@ module.exports = function getPermissionsFromCookie() {
         const cookies = document.cookie.split(';').map(item => item.split('=')).reduce((acc, [k, v]) => (acc[k.trim().replace('"', '')] = v) && acc, {});
         if (typeof(cookies) !== "undefined") {
             const cookie_perms = cookies['hx-perms'];
-            if (cookie_perms.indexOf('kondo-admin') !== -1 || cookie_perms.indexOf('kondo-operation') !== -1 || cookie_perms.indexOf('kondo-admin') !== -1 || cookie_perms.indexOf('kondo-editor') !== -1) {
+            if (cookie_perms.indexOf('kondo-admin') !== -1 || cookie_perms.indexOf('kondo-operation') !== -1 || cookie_perms.indexOf('kondo-editor') !== -1) {
                 permissions.admin = true
                 permissions.create = true
                 permissions.update = true
