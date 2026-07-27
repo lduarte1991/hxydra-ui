@@ -75,7 +75,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import http from '@/http'
   export default {
     name: 'ReportView',
     components: {
@@ -134,11 +134,7 @@
         if (urlLink1.indexOf('flex%2F') > -1) {
           urlLink = decodeURIComponent(urlLink1.replace('?format=json',''))
         }
-        if (!axios) {
-          return
-        }
-
-        await axios.get(
+        await http.get(
           urlLink,
           {
             onDownloadProgress: progressEvent => {

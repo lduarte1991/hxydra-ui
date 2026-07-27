@@ -305,7 +305,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import http from '@/http'
   export default {
     name: 'KondoChoice',
     props: {
@@ -449,12 +449,9 @@
     },
     methods: {
       getChoices () {
-        if (!axios) {
-          return {}
-        }
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
-          axios.get(this.api_url_prefix +s['tech_name']+'/')
+          http.get(this.api_url_prefix +s['tech_name']+'/')
             .then(e => {
               if ('par' in s){
                 this[s['tech_name']] = e.data.map(function(f) {
@@ -487,10 +484,7 @@
           options[choice.par] = this.newPar
           hasPar = true
         }
-        if (!axios) {
-          return
-        }
-        axios.post(
+        http.post(
           this.api_url_prefix + this.choiceSelected+'/',
           options
         )
@@ -532,7 +526,7 @@
             'email': this.newEmail.length == 0 ? [] : this.newEmail.split(','),
             'affiliation': this.newAffiliation.length == 0 ? [] : this.newAffiliation.split(',')
           }
-          axios.post(
+          http.post(
             this.api_url_prefix +'person/',
             person
           ).then(() => {
@@ -571,7 +565,7 @@
           'email': email_to_send,
           'affiliation': affiliation_to_send
         }
-        axios.put(
+        http.put(
             this.api_url_prefix +'person/' + this.idRef + '/',
             person
           ).then(() => {
@@ -607,7 +601,7 @@
       },
       async deleteChoice() {
         let self = this
-        await axios.delete(
+        await http.delete(
           this.api_url_prefix + this.choiceSelected + '/' + self.awaitingDelete.value.replace(' ', '-') + '/'
         )
           .then(e => {
@@ -644,7 +638,7 @@
           hasPar = true
         }
         let self = this
-        axios.put(
+        http.put(
           this.api_url_prefix + this.choiceSelected+'/'+this.awaitingEdit.value+'/',
           options
         )
@@ -678,17 +672,8 @@
             self.errorMessage = "API could not be reached. Update did not happen"
           })
       },
-      async getListFromAPI () {
-        // return await axios.get(
-        //   apiurl
-        // ).then(data => console.log(data.data))
-      },
       async getPeople () {
-        //eventually this should call a new API call that gets the full list of people
-        if (!axios) {
-          return
-        }
-        await axios.get(
+        await http.get(
           this.people_api_url
         ).then(data => {
           this.people = data.data

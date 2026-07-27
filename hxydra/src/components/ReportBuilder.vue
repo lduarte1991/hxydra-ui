@@ -274,7 +274,7 @@
   </v-card>
 </template>
 <script>
-  import axios from 'axios';
+  import http from '@/http';
   export default {
     name: 'ReportBuilder',
     props: {},
@@ -367,10 +367,7 @@
     methods: {
       async getHeaders() {
         const self = this
-        if (!axios) {
-          return
-        }
-        await axios.get(
+        await http.get(
           self.api_header_url
         ).then((response) => {
           self.header_options = response.data
@@ -389,11 +386,8 @@
         this.downloadBox = true
         this.progressMessage = 'Requesting report. This may take a few minutes...'
         this.progressValue = 0
-        if (!axios) {
-          return
-        }
 
-        await axios.get(
+        await http.get(
           url,
           {
             onDownloadProgress: progressEvent => {

@@ -190,18 +190,28 @@
 
                 <v-tab
                   key="details"
+                  tab-value="details"
                 >
                   Details
                 </v-tab>
                 <v-tab
                   key="team"
+                  tab-value="team"
                 >
                   Team
                 </v-tab>
                 <v-tab
                   key="dissub"
+                  tab-value="dissub"
                 >
                   Discipline/edX Subject
+                </v-tab>
+                <v-tab
+                  v-if="canAccessCredentials"
+                  key="credentials"
+                  tab-value="credentials"
+                >
+                  Credentials
                 </v-tab>
               </v-tabs>
             </template>
@@ -209,6 +219,7 @@
           <v-tabs-items v-model="tab">
             <v-tab-item
               key="details"
+              value="details"
             >
               <v-card flat>
                 <v-container>
@@ -433,6 +444,7 @@
             </v-tab-item>
             <v-tab-item
               key="team"
+              value="team"
             >
               <v-card flat>
                 <v-data-table
@@ -468,6 +480,7 @@
             </v-tab-item>
             <v-tab-item
               key="dissub"
+              value="dissub"
             >
               <v-card flat>
                 <v-card-text>
@@ -490,6 +503,121 @@
                 </v-card-text>
               </v-card>
             </v-tab-item>
+            <v-tab-item
+              v-if="canAccessCredentials"
+              key="credentials"
+              value="credentials"
+            >
+              <v-card flat>
+                <v-card-text>
+                  <div class="credential-section">
+                    <h3 class="credential-section__heading">
+                      HxAT LTI Credentials
+                    </h3>
+                    <div
+                      v-if="credentialLoading"
+                      class="text-center py-4"
+                    >
+                      <v-progress-circular indeterminate />
+                    </div>
+                    <div v-else-if="credentialError">
+                      <div>{{ credentialError }}</div>
+                      <v-btn
+                        class="mt-2"
+                        small
+                        @click="fetchCredentials"
+                      >
+                        Retry
+                      </v-btn>
+                    </div>
+                    <div v-else-if="credentialNotFound">
+                      <div>No credentials exist for this course.</div>
+                      <v-btn
+                        class="mt-2"
+                        :disabled="!hasValidCourseId"
+                        @click="requestCredentials"
+                      >
+                        Request Credentials
+                      </v-btn>
+                      <div
+                        v-if="!hasValidCourseId"
+                        class="text-caption mt-1"
+                      >
+                        No course ID is associated with this course.
+                      </div>
+                    </div>
+                    <div v-else-if="credential && !credential.approved">
+                      {{ credential.message }}
+                    </div>
+                    <v-container
+                      v-else-if="credential && credential.approved"
+                      class="pa-0"
+                    >
+                      <v-row align="center">
+                        <v-col class="text-caption col-2">
+                          HxAT LTI Key:
+                        </v-col>
+                        <v-col class="col-8">
+                          {{ credential.lti_key }}
+                        </v-col>
+                        <v-col class="col-2">
+                          <v-btn
+                            v-if="!clipboardUnavailable"
+                            icon
+                            small
+                            @click="copyToClipboard(credential.lti_key, 'key')"
+                          >
+                            <v-icon small>
+                              {{ credentialCopied === 'key' ? 'mdi-check' : 'mdi-content-copy' }}
+                            </v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <v-row align="center">
+                        <v-col class="text-caption col-2">
+                          HxAT LTI Secret:
+                        </v-col>
+                        <v-col class="col-8">
+                          {{ credential.lti_secret }}
+                        </v-col>
+                        <v-col class="col-2">
+                          <v-btn
+                            v-if="!clipboardUnavailable"
+                            icon
+                            small
+                            @click="copyToClipboard(credential.lti_secret, 'secret')"
+                          >
+                            <v-icon small>
+                              {{ credentialCopied === 'secret' ? 'mdi-check' : 'mdi-content-copy' }}
+                            </v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <div
+                        v-if="clipboardUnavailable"
+                        class="text-caption mt-2"
+                      >
+                        Clipboard access is unavailable. Please highlight the text above and copy manually.
+                      </div>
+                    </v-container>
+                    <div v-else>
+                      <v-btn
+                        :disabled="!hasValidCourseId"
+                        @click="fetchCredentials"
+                      >
+                        Fetch HxAT LTI Credentials
+                      </v-btn>
+                      <div
+                        v-if="!hasValidCourseId"
+                        class="text-caption mt-1"
+                      >
+                        No course ID is associated with this course.
+                      </div>
+                    </div>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-tab-item>
           </v-tabs-items>
         </v-card>
       </v-col>
@@ -498,19 +626,9 @@
 </template>
 
 <script>
-let perms = false
-try {
-  const cookie = document.cookie
-  if (typeof(cookie) !== "undefined") {
-    let cookie_split = cookie.split(';').map(x => x.split('='))
-    let perm_cookie_val = cookie_split.filter(y => y.length == 2 ? y[0].trim() == 'hx-perms' : false)
-    if (perm_cookie_val.length > 0) {
-      perms = perm_cookie_val[0][1].trim().indexOf('kondo-editor') > -1
-    }
-  }
-} catch {
-  perms = false
-}
+import http from '@/http'
+import getPermissionsFromCookie from '@/resources/permissions'
+
   export default {
     name: 'EditForm',
     props: {
@@ -523,7 +641,15 @@ try {
     },
     data: () => ({
       searchTeam: '',
-      write_perm: perms,
+      write_perm: getPermissionsFromCookie(),
+      credential: null,
+      credentialLoading: false,
+      credentialNotFound: false,
+      credentialError: null,
+      credentialCopied: '',
+      clipboardUnavailable: false,
+      api_credential_url: (process.env.VUE_APP_HXAT_API_URL || '') + 'course/',
+      kondo_api_url: process.env.VUE_APP_KONDO_API_URL,
       teamHeaders: [{
         text: 'Name',
         sortable: true,
@@ -576,6 +702,34 @@ try {
       //   types: [],
       // }
     }),
+    computed: {
+      canAccessCredentials() {
+        return this.write_perm.credentials
+      },
+      hasValidCourseId() {
+        return !!this.course.program_id
+      }
+    },
+    watch: {
+      'course.program_id'() {
+        this.credential = null
+        this.credentialNotFound = false
+        this.credentialError = null
+        this.credentialLoading = false
+        this.credentialCopied = ''
+        this.clipboardUnavailable = false
+      },
+      tab(newTab) {
+        if (newTab === 'credentials') {
+          this.credential = null
+          this.credentialNotFound = false
+          this.credentialError = null
+          this.credentialLoading = false
+          this.credentialCopied = ''
+          this.clipboardUnavailable = false
+        }
+      }
+    },
     methods: {
       filter (value, search) {
         return value != null &&
@@ -593,7 +747,112 @@ try {
         const regEx = /_v([0-9]+)/g
         const arr = [...nickname.matchAll(regEx)]
         return arr[0][1];
+      },
+      async fetchCredentials() {
+        this.credential = null
+        this.credentialNotFound = false
+        this.credentialError = null
+        this.credentialLoading = true
+        this.credentialCopied = ''
+        this.clipboardUnavailable = false
+        try {
+          const { data } = await http.get(
+            this.api_credential_url + this.course.program_id + '/credential/'
+          )
+          this.credential = data
+        } catch (e) {
+          if (e.response && e.response.status === 404) {
+            this.credentialNotFound = true
+          } else {
+            this.credentialError = 'Could not load credentials. Please try again or contact the tech team.'
+          }
+        } finally {
+          this.credentialLoading = false
+        }
+      },
+      async requestCredentials() {
+        this.credentialNotFound = false
+        this.credentialError = null
+        this.credentialLoading = true
+        this.credentialCopied = ''
+        this.clipboardUnavailable = false
+        try {
+          const body = { course_name: `${this.course.title} ${this.course.program_run}` }
+          const previousCourseId = await this.getPreviousCourseId()
+          if (previousCourseId) {
+            body.previous_course_id = previousCourseId
+          }
+          const { data } = await http.post(
+            this.api_credential_url + this.course.program_id + '/credential/',
+            body
+          )
+          this.credential = data
+        } catch (e) {
+          this.credentialError = 'Could not request credentials. Please try again or contact the tech team.'
+        } finally {
+          this.credentialLoading = false
+        }
+      },
+      async getPreviousCourseId() {
+        try {
+          const { data } = await http.get(
+            this.kondo_api_url + 'projectps/' + this.course.prefix + '/' + this.course.sequence + '/?permission=true'
+          )
+          const all = data.projects
+          const currentVersion = this.course.version
+          const currentRun = this.course.run
+
+          let predecessorNickname = null
+          if (currentRun > 0) {
+            const pred = all.find(p => p.version === currentVersion && p.run === currentRun - 1)
+            if (pred) predecessorNickname = pred.nickname
+          } else if (currentVersion > 1) {
+            const prevVersionCourses = all.filter(p => p.version === currentVersion - 1)
+            if (prevVersionCourses.length > 0) {
+              const pred = prevVersionCourses.reduce((a, b) => a.run > b.run ? a : b)
+              predecessorNickname = pred.nickname
+            }
+          }
+
+          if (!predecessorNickname) return null
+
+          const detail = await http.get(
+            this.kondo_api_url + 'project/' + predecessorNickname + '/?permission=true'
+          )
+          return detail.data.program_id || null
+        } catch {
+          return null
+        }
+      },
+      copyToClipboard(text, field) {
+        if (!navigator.clipboard?.writeText) {
+          this.clipboardUnavailable = true
+          return
+        }
+        navigator.clipboard.writeText(text).then(() => {
+          this.credentialCopied = field
+          setTimeout(() => { this.credentialCopied = '' }, 2000)
+        }).catch(() => {
+          this.clipboardUnavailable = true
+        })
       }
     },
   }
 </script>
+
+<style scoped>
+.credential-section {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  padding: 16px 20px;
+}
+
+.credential-section__heading {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: rgba(0, 0, 0, 0.76);
+}
+</style>
