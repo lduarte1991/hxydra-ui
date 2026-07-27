@@ -15,8 +15,8 @@ module.exports = {
         target: process.env.HXAT_PROXY_TARGET,
         changeOrigin: true,
         onProxyReq(proxyReq) {
-          if (process.env.VUE_APP_HXAT_API_KEY) {
-            proxyReq.setHeader('Authorization', `Bearer ${process.env.VUE_APP_HXAT_API_KEY}`)
+          if (process.env.HXAT_API_KEY) {
+            proxyReq.setHeader('Authorization', `Bearer ${process.env.HXAT_API_KEY}`)
           }
         }
       }

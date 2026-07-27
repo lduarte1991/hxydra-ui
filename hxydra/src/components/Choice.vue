@@ -449,9 +449,6 @@
     },
     methods: {
       getChoices () {
-        if (!http) {
-          return {}
-        }
         // TODO: Try to get all these list values in one go
         for (const s of this.setup_options) {
           http.get(this.api_url_prefix +s['tech_name']+'/')
@@ -486,9 +483,6 @@
         if ('par' in choice) {
           options[choice.par] = this.newPar
           hasPar = true
-        }
-        if (!http) {
-          return
         }
         http.post(
           this.api_url_prefix + this.choiceSelected+'/',
@@ -678,16 +672,7 @@
             self.errorMessage = "API could not be reached. Update did not happen"
           })
       },
-      async getListFromAPI () {
-        // return await http.get(
-        //   apiurl
-        // ).then(data => console.log(data.data))
-      },
       async getPeople () {
-        //eventually this should call a new API call that gets the full list of people
-        if (!http) {
-          return
-        }
         await http.get(
           this.people_api_url
         ).then(data => {

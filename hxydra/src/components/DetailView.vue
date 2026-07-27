@@ -506,14 +506,6 @@
                     <h3 class="credential-section__heading">
                       HxAT LTI Credentials
                     </h3>
-                    <div v-if="!credentialLoading && credential === null && !credentialNotFound && !credentialError">
-                      <v-btn :disabled="!hasValidCourseId" @click="fetchCredentials">
-                        Fetch HxAT LTI Credentials
-                      </v-btn>
-                      <div v-if="!hasValidCourseId" class="text-caption mt-1">
-                        No course ID is associated with this course.
-                      </div>
-                    </div>
                     <div
                       v-if="credentialLoading"
                       class="text-center py-4"
@@ -559,6 +551,7 @@
                         </v-col>
                         <v-col class="col-2">
                           <v-btn
+                            v-if="!clipboardUnavailable"
                             icon
                             small
                             @click="copyToClipboard(credential.lti_key, 'key')"
@@ -578,6 +571,7 @@
                         </v-col>
                         <v-col class="col-2">
                           <v-btn
+                            v-if="!clipboardUnavailable"
                             icon
                             small
                             @click="copyToClipboard(credential.lti_secret, 'secret')"
@@ -588,7 +582,18 @@
                           </v-btn>
                         </v-col>
                       </v-row>
+                      <div v-if="clipboardUnavailable" class="text-caption mt-2">
+                        Clipboard access is unavailable. Please highlight the text above and copy manually.
+                      </div>
                     </v-container>
+                    <div v-else>
+                      <v-btn :disabled="!hasValidCourseId" @click="fetchCredentials">
+                        Fetch HxAT LTI Credentials
+                      </v-btn>
+                      <div v-if="!hasValidCourseId" class="text-caption mt-1">
+                        No course ID is associated with this course.
+                      </div>
+                    </div>
                   </div>
                 </v-card-text>
               </v-card>
@@ -603,6 +608,8 @@
 <script>
 import http from '@/http'
 import getPermissionsFromCookie from '@/resources/permissions'
+
+const CREDENTIALS_TAB_INDEX = 3
 
   export default {
     name: 'EditForm',
@@ -622,7 +629,8 @@ import getPermissionsFromCookie from '@/resources/permissions'
       credentialNotFound: false,
       credentialError: null,
       credentialCopied: '',
-      api_credential_url: process.env.VUE_APP_HXAT_API_URL + 'course/',
+      clipboardUnavailable: false,
+      api_credential_url: (process.env.VUE_APP_HXAT_API_URL || '') + 'course/',
       kondo_api_url: process.env.VUE_APP_KONDO_API_URL,
       teamHeaders: [{
         text: 'Name',
@@ -691,14 +699,16 @@ import getPermissionsFromCookie from '@/resources/permissions'
         this.credentialError = null
         this.credentialLoading = false
         this.credentialCopied = ''
+        this.clipboardUnavailable = false
       },
       tab(newTab) {
-        if (newTab === 3) {
+        if (newTab === CREDENTIALS_TAB_INDEX) {
           this.credential = null
           this.credentialNotFound = false
           this.credentialError = null
           this.credentialLoading = false
           this.credentialCopied = ''
+          this.clipboardUnavailable = false
         }
       }
     },
@@ -726,10 +736,10 @@ import getPermissionsFromCookie from '@/resources/permissions'
         this.credentialError = null
         this.credentialLoading = true
         this.credentialCopied = ''
+        this.clipboardUnavailable = false
         try {
           const { data } = await http.get(
-            this.api_credential_url + this.course.program_id + '/credential/',
-            { headers: { Authorization: `Bearer ${process.env.VUE_APP_HXAT_API_KEY}` } }
+            this.api_credential_url + this.course.program_id + '/credential/'
           )
           this.credential = data
         } catch (e) {
@@ -747,6 +757,7 @@ import getPermissionsFromCookie from '@/resources/permissions'
         this.credentialError = null
         this.credentialLoading = true
         this.credentialCopied = ''
+        this.clipboardUnavailable = false
         try {
           const body = { course_name: `${this.course.title} ${this.course.program_run}` }
           const previousCourseId = await this.getPreviousCourseId()
@@ -755,8 +766,7 @@ import getPermissionsFromCookie from '@/resources/permissions'
           }
           const { data } = await http.post(
             this.api_credential_url + this.course.program_id + '/credential/',
-            body,
-            { headers: { Authorization: `Bearer ${process.env.VUE_APP_HXAT_API_KEY}` } }
+            body
           )
           this.credential = data
         } catch (e) {
@@ -797,9 +807,15 @@ import getPermissionsFromCookie from '@/resources/permissions'
         }
       },
       copyToClipboard(text, field) {
+        if (!navigator.clipboard?.writeText) {
+          this.clipboardUnavailable = true
+          return
+        }
         navigator.clipboard.writeText(text).then(() => {
           this.credentialCopied = field
           setTimeout(() => { this.credentialCopied = '' }, 2000)
+        }).catch(() => {
+          this.clipboardUnavailable = true
         })
       }
     },
