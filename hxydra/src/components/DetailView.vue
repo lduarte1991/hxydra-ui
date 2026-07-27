@@ -506,10 +506,13 @@
                     <h3 class="credential-section__heading">
                       HxAT LTI Credentials
                     </h3>
-                    <div v-if="!credentialLoading && credential === null && !credentialNotFound">
-                      <v-btn @click="fetchCredentials">
+                    <div v-if="!credentialLoading && credential === null && !credentialNotFound && !credentialError">
+                      <v-btn :disabled="!hasValidCourseId" @click="fetchCredentials">
                         Fetch HxAT LTI Credentials
                       </v-btn>
+                      <div v-if="!hasValidCourseId" class="text-caption mt-1">
+                        No course ID is associated with this course.
+                      </div>
                     </div>
                     <div
                       v-if="credentialLoading"
@@ -517,14 +520,28 @@
                     >
                       <v-progress-circular indeterminate />
                     </div>
+                    <div v-else-if="credentialError">
+                      <div>{{ credentialError }}</div>
+                      <v-btn
+                        class="mt-2"
+                        small
+                        @click="fetchCredentials"
+                      >
+                        Retry
+                      </v-btn>
+                    </div>
                     <div v-else-if="credentialNotFound">
                       <div>No credentials exist for this course.</div>
                       <v-btn
                         class="mt-2"
+                        :disabled="!hasValidCourseId"
                         @click="requestCredentials"
                       >
                         Request Credentials
                       </v-btn>
+                      <div v-if="!hasValidCourseId" class="text-caption mt-1">
+                        No course ID is associated with this course.
+                      </div>
                     </div>
                     <div v-else-if="credential && !credential.approved">
                       {{ credential.message }}
@@ -603,6 +620,7 @@ import getPermissionsFromCookie from '@/resources/permissions'
       credential: null,
       credentialLoading: false,
       credentialNotFound: false,
+      credentialError: null,
       credentialCopied: '',
       api_credential_url: process.env.VUE_APP_HXAT_API_URL + 'course/',
       kondo_api_url: process.env.VUE_APP_KONDO_API_URL,
@@ -661,12 +679,16 @@ import getPermissionsFromCookie from '@/resources/permissions'
     computed: {
       canAccessCredentials() {
         return this.write_perm.credentials
+      },
+      hasValidCourseId() {
+        return !!this.course.program_id
       }
     },
     watch: {
       'course.program_id'() {
         this.credential = null
         this.credentialNotFound = false
+        this.credentialError = null
         this.credentialLoading = false
         this.credentialCopied = ''
       },
@@ -674,6 +696,7 @@ import getPermissionsFromCookie from '@/resources/permissions'
         if (newTab === 3) {
           this.credential = null
           this.credentialNotFound = false
+          this.credentialError = null
           this.credentialLoading = false
           this.credentialCopied = ''
         }
@@ -700,6 +723,7 @@ import getPermissionsFromCookie from '@/resources/permissions'
       async fetchCredentials() {
         this.credential = null
         this.credentialNotFound = false
+        this.credentialError = null
         this.credentialLoading = true
         this.credentialCopied = ''
         try {
@@ -711,6 +735,8 @@ import getPermissionsFromCookie from '@/resources/permissions'
         } catch (e) {
           if (e.response && e.response.status === 404) {
             this.credentialNotFound = true
+          } else {
+            this.credentialError = 'Could not load credentials. Please try again or contact the tech team.'
           }
         } finally {
           this.credentialLoading = false
@@ -718,6 +744,7 @@ import getPermissionsFromCookie from '@/resources/permissions'
       },
       async requestCredentials() {
         this.credentialNotFound = false
+        this.credentialError = null
         this.credentialLoading = true
         this.credentialCopied = ''
         try {
@@ -733,7 +760,7 @@ import getPermissionsFromCookie from '@/resources/permissions'
           )
           this.credential = data
         } catch (e) {
-          this.credentialNotFound = true
+          this.credentialError = 'Could not request credentials. Please try again or contact the tech team.'
         } finally {
           this.credentialLoading = false
         }
