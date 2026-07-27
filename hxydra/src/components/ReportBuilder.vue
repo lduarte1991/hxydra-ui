@@ -367,9 +367,6 @@
     methods: {
       async getHeaders() {
         const self = this
-        if (!http) {
-          return
-        }
         await http.get(
           self.api_header_url
         ).then((response) => {
@@ -389,9 +386,6 @@
         this.downloadBox = true
         this.progressMessage = 'Requesting report. This may take a few minutes...'
         this.progressValue = 0
-        if (!http) {
-          return
-        }
 
         await http.get(
           url,

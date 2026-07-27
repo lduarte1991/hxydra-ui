@@ -235,9 +235,6 @@
       },
       async getUniqueProjects () {
         const self = this
-        if (!http) {
-          return
-        }
         await http.get(
           self.api_uniqueprojects_url
         )
@@ -253,9 +250,6 @@
       },
       async getItemDetail ( item ) {
         const self = this
-        if (!http) {
-          return
-        }
         await http.get(
           self.api_uniqueprojects_url + item.prefix + '/' + item.sequence + '/?permission=true'
         )
@@ -290,9 +284,6 @@
       async archiveChanged (item, selection) {
         const self = this
         console.log(item.video_archived)
-        if (!http) {
-          return
-        }
         await http.patch(
           self.api_projects_url + "project/" + item.nickname + '/', {
             video_archived: item.video_archived,

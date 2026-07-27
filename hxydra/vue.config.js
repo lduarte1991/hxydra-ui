@@ -6,7 +6,7 @@ module.exports = {
         target: process.env.KONDO_PROXY_TARGET,
         changeOrigin: true,
         onProxyReq(proxyReq) {
-          if (process.env.DEV_SESSION_COOKIE) {
+          if (process.env.DEV_SESSION_COOKIE && process.env.DEV_HX_PERMS_COOKIE) {
             proxyReq.setHeader('Cookie', `sessionid=${process.env.DEV_SESSION_COOKIE}; hx-perms=${process.env.DEV_HX_PERMS_COOKIE}`)
           }
         }

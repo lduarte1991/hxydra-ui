@@ -201,9 +201,6 @@
     methods: {
       async getReports () {
         const self = this
-        if (!http) {
-          return
-        }
         await http.get(
           self.api_url
         )
@@ -222,9 +219,6 @@
         this.downloadBox = true
         this.progressMessage = 'Requesting report. This may take a few minutes...'
         this.progressValue = 0
-        if (!http) {
-          return
-        }
 
         await http.get(
           url,
@@ -264,9 +258,6 @@
       //   this.loadProgress = "Making Request. It may say 0% for a few minutes... - 0"
       //   this.tableData = []
       //   this.tableHeaders = []
-      //   if (!http) {
-      //     return
-      //   }
 
       //   await http.get(
       //     urlLink,

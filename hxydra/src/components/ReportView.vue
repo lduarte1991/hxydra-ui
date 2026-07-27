@@ -134,10 +134,6 @@
         if (urlLink1.indexOf('flex%2F') > -1) {
           urlLink = decodeURIComponent(urlLink1.replace('?format=json',''))
         }
-        if (!http) {
-          return
-        }
-
         await http.get(
           urlLink,
           {

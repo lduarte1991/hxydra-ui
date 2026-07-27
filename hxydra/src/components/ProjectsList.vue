@@ -297,7 +297,7 @@
     },
     watch: {
       detail(isOpen) {
-        if (!isOpen) {
+        if (!isOpen && !this.editing) {
           this.selected = undefined
         }
       }
@@ -313,9 +313,6 @@
       },
       async getProjects () {
         const self = this
-        if (!http) {
-          return
-        }
         await http.get(
           self.api_projects_url
         )
@@ -352,9 +349,6 @@
       },
       async getItemDetail ( item ) {
         const self = this
-        if (!http) {
-          return
-        }
         await http.get(
           self.api_projects_url + item.nickname
           + '/?permission=true'
@@ -387,9 +381,6 @@
           return
         }
         const self = this;
-        if (!http) {
-          return
-        }
         await http.delete(
           self.api_projects_url + item.nickname
           + '/'
@@ -408,9 +399,6 @@
           return
         }
         const self = this;
-        if (!http) {
-          return
-        }
         await http.post(
           self.api_copy_project_url + 'sequence/' + item.nickname + '/'
         )
@@ -438,9 +426,6 @@
           return
         }
         const self = this;
-        if (!http) {
-          return
-        }
         await http.post(
           self.api_copy_project_url + 'version/' + item.nickname + '/'
         )
@@ -468,9 +453,6 @@
           return
         }
         const self = this;
-        if (!http) {
-          return
-        }
         await http.post(
           self.api_copy_project_url + 'run/' + item.nickname + '/'
         )
