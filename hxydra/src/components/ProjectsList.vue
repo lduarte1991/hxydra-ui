@@ -303,17 +303,13 @@
     mounted() {
       this.getProjects();
 
-      this._popstateHandler = () => {
-        let uri = window.location.href.split('?')
-        let getVars = {}
-        if (uri.length == 2) {
-          uri[1].split('&').forEach(function(v) {
-            let tmp = v.split('=')
-            if (tmp.length == 2) getVars[tmp[0]] = tmp[1]
-          })
-        }
-        if (!('course' in getVars) && this.detail) {
+      this._popstateHandler = (event) => {
+        const course = event.state?.course
+        if (!course && this.detail) {
           this.detail = false
+        } else if (course && !this.detail) {
+          const found = this.projects.find(v => v.nickname === course)
+          if (found) this.viewDetail(found, true)
         }
       }
       window.addEventListener('popstate', this._popstateHandler)
@@ -338,31 +334,14 @@
           .then(data => {
             self.projects = data.data
 
-            // from https://stackoverflow.com/questions/35914069/how-can-i-get-query-parameters-from-a-url-in-vue-js
-            let uri = window.location.href.split('?');
-            if(uri.length == 2) {
-              let vars = uri[1].split('&');
-              let getVars = {};
-              let tmp = '';
-              vars.forEach(function(v) {
-                tmp = v.split('=');
-                if(tmp.length == 2)
-                  getVars[tmp[0]] = tmp[1];
-              });
-
-              if ('course_created' in getVars) {
-                let found_course = self.projects.filter(v => v.nickname == getVars['course_created'])
-                if (found_course.length == 1) {
-                  self.newProject = found_course[0]
-                }
-              }
-
-              if ('course' in getVars) {
-                let found_course = self.projects.filter(v => v.nickname == getVars['course'])
-                if (found_course.length == 1) {
-                  self.viewDetail(found_course[0], true)
-                }
-              }
+            const params = new URLSearchParams(window.location.search)
+            if (params.has('course_created')) {
+              const found = self.projects.find(v => v.nickname === params.get('course_created'))
+              if (found) self.newProject = found
+            }
+            if (params.has('course')) {
+              const found = self.projects.find(v => v.nickname === params.get('course'))
+              if (found) self.viewDetail(found, true)
             }
 
           })
@@ -401,7 +380,7 @@
             .then(() => this.detail = true)
             .then(() => this.editing = false)
             .then(() => {
-              const url = window.location.pathname + '?course=' + item.nickname
+              const url = window.location.pathname + '?course=' + encodeURIComponent(item.nickname)
               if (replaceHistory) {
                 history.replaceState({ course: item.nickname }, '', url)
               } else {
