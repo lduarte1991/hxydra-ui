@@ -309,6 +309,7 @@
           this.detail = false
         } else if (course && !this.detail) {
           const found = this.projects.find(v => v.nickname === course)
+          // course no longer in loaded list (e.g. deleted in another tab) — leave dialog closed
           if (found) this.viewDetail(found, true)
         }
       }
@@ -367,6 +368,7 @@
       },
       editItem (item) {
 
+        // editing must be true before detail is false so the detail watcher skips the URL clear
         this.getItemDetail(item)
           .then(() => this.editing = true)
           .then(() => this.detail = false)
