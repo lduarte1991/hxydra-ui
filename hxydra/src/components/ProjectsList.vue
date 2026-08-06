@@ -296,11 +296,27 @@
       detail(isOpen) {
         if (!isOpen && !this.editing) {
           this.selected = undefined
+          history.replaceState({}, '', window.location.pathname)
         }
       }
     },
     mounted() {
       this.getProjects();
+
+      this._popstateHandler = (event) => {
+        const course = event.state?.course
+        if (!course && this.detail) {
+          this.detail = false
+        } else if (course && !this.detail) {
+          const found = this.projects.find(v => v.nickname === course)
+          // course no longer in loaded list (e.g. deleted in another tab) — leave dialog closed
+          if (found) this.viewDetail(found, true)
+        }
+      }
+      window.addEventListener('popstate', this._popstateHandler)
+    },
+    beforeDestroy() {
+      window.removeEventListener('popstate', this._popstateHandler)
     },
     methods: {
       filter (value, search) {
@@ -319,24 +335,14 @@
           .then(data => {
             self.projects = data.data
 
-            // from https://stackoverflow.com/questions/35914069/how-can-i-get-query-parameters-from-a-url-in-vue-js
-            let uri = window.location.href.split('?');
-            if(uri.length == 2) {
-              let vars = uri[1].split('&');
-              let getVars = {};
-              let tmp = '';
-              vars.forEach(function(v) {
-                tmp = v.split('=');
-                if(tmp.length == 2)
-                  getVars[tmp[0]] = tmp[1];
-              });
-
-              if ('course_created' in getVars) {
-                let found_course = self.projects.filter(v => v.nickname == getVars['course_created'])
-                if (found_course.length == 1) {
-                  self.newProject = found_course[0]
-                }
-              }
+            const params = new URLSearchParams(window.location.search)
+            if (params.has('course_created')) {
+              const found = self.projects.find(v => v.nickname === params.get('course_created'))
+              if (found) self.newProject = found
+            }
+            if (params.has('course')) {
+              const found = self.projects.find(v => v.nickname === params.get('course'))
+              if (found) self.viewDetail(found, true)
             }
 
           })
@@ -362,18 +368,27 @@
       },
       editItem (item) {
 
+        // editing must be true before detail is false so the detail watcher skips the URL clear
         this.getItemDetail(item)
           .then(() => this.editing = true)
           .then(() => this.detail = false)
 
       },
-      async viewDetail (item) {
+      async viewDetail (item, replaceHistory = false) {
         var selection = window.getSelection();
         if(selection.toString().length === 0) {
           this.getItemDetail(item)
             .then(() => this.rowItem = item)
             .then(() => this.detail = true)
             .then(() => this.editing = false)
+            .then(() => {
+              const url = window.location.pathname + '?course=' + encodeURIComponent(item.nickname)
+              if (replaceHistory) {
+                history.replaceState({ course: item.nickname }, '', url)
+              } else {
+                history.pushState({ course: item.nickname }, '', url)
+              }
+            })
         }
       },
       async deleteItem (item) {
@@ -477,6 +492,7 @@
       },
       closeEdit (e) {
         this.editing = false
+        history.replaceState({}, '', window.location.pathname)
         if (e) {
           let indexFound = this.projects.findIndex(obj => obj.nickname === e.nickname)
           if (indexFound == -1) {
