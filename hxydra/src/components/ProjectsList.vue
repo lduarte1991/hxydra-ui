@@ -296,11 +296,30 @@
       detail(isOpen) {
         if (!isOpen && !this.editing) {
           this.selected = undefined
+          history.replaceState({}, '', window.location.pathname)
         }
       }
     },
     mounted() {
       this.getProjects();
+
+      this._popstateHandler = () => {
+        let uri = window.location.href.split('?')
+        let getVars = {}
+        if (uri.length == 2) {
+          uri[1].split('&').forEach(function(v) {
+            let tmp = v.split('=')
+            if (tmp.length == 2) getVars[tmp[0]] = tmp[1]
+          })
+        }
+        if (!('course' in getVars) && this.detail) {
+          this.detail = false
+        }
+      }
+      window.addEventListener('popstate', this._popstateHandler)
+    },
+    beforeDestroy() {
+      window.removeEventListener('popstate', this._popstateHandler)
     },
     methods: {
       filter (value, search) {
@@ -337,6 +356,13 @@
                   self.newProject = found_course[0]
                 }
               }
+
+              if ('course' in getVars) {
+                let found_course = self.projects.filter(v => v.nickname == getVars['course'])
+                if (found_course.length == 1) {
+                  self.viewDetail(found_course[0], true)
+                }
+              }
             }
 
           })
@@ -367,13 +393,21 @@
           .then(() => this.detail = false)
 
       },
-      async viewDetail (item) {
+      async viewDetail (item, replaceHistory = false) {
         var selection = window.getSelection();
         if(selection.toString().length === 0) {
           this.getItemDetail(item)
             .then(() => this.rowItem = item)
             .then(() => this.detail = true)
             .then(() => this.editing = false)
+            .then(() => {
+              const url = window.location.pathname + '?course=' + item.nickname
+              if (replaceHistory) {
+                history.replaceState({ course: item.nickname }, '', url)
+              } else {
+                history.pushState({ course: item.nickname }, '', url)
+              }
+            })
         }
       },
       async deleteItem (item) {
@@ -477,6 +511,7 @@
       },
       closeEdit (e) {
         this.editing = false
+        history.replaceState({}, '', window.location.pathname)
         if (e) {
           let indexFound = this.projects.findIndex(obj => obj.nickname === e.nickname)
           if (indexFound == -1) {
