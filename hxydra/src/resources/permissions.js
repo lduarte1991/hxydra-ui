@@ -5,7 +5,8 @@ module.exports = function getPermissionsFromCookie() {
         create: false,
         update: false,
         delete: false,
-        credentials: false
+        credentials: false,
+        kondoIt: false
     }
     try {
         const cookies = document.cookie.split(';').map(item => item.split('=')).reduce((acc, [k, v]) => (acc[k.trim().replace('"', '')] = v) && acc, {});
@@ -35,6 +36,9 @@ module.exports = function getPermissionsFromCookie() {
             if (cookie_perms.indexOf('kondo-admin') !== -1 || cookie_perms.indexOf('kondo-it') !== -1) {
                 permissions.credentials = true
             }
+            if (cookie_perms.indexOf('kondo-it') !== -1) {
+                permissions.kondoIt = true
+            }
         }
     } catch {
         permissions = {
@@ -43,7 +47,8 @@ module.exports = function getPermissionsFromCookie() {
             create: false,
             update: false,
             delete: false,
-            credentials: false
+            credentials: false,
+            kondoIt: false
         }
     }
     return permissions

@@ -793,6 +793,10 @@
         default() {
           return {}
         }
+      },
+      limitedEditMode: {
+        type: Boolean,
+        default: false
       }
     },
     data: () => ({
@@ -817,6 +821,7 @@
       marketingDatePop: false,
       quickfilledx: '',
       quickfillhbso: '',
+      originalCourse: null,
       show_messages: false,
       error_messages: [],
       db_errors: [],
@@ -1016,12 +1021,14 @@
     },
     watch: {
       quickfilledx: function(val) {
-        //course-v1:HarvardX+PH211x+1T2021
-        let normalizedID = val.replace('course-v1:', '').replace(/\+/g, '/')
+        // accepts bare course key (course-v1:Org+Code+Run) or a full edX URL
+        const match = val.match(/course-v1:[^/\s]+/)
+        const courseKey = match ? match[0] : val
+        let normalizedID = courseKey.replace('course-v1:', '').replace(/\+/g, '/')
         let split_id = normalizedID.split('/')
         this.course.program_code = split_id[1]
         this.course.program_run = split_id[2]
-        this.course.program_id = val
+        this.course.program_id = courseKey
       },
       quickfillhbso: function(val) {
         try {
@@ -1030,6 +1037,22 @@
           this.course.program_id = val
         } catch(e) {
           console.log(e)
+        }
+      },
+      course: {
+        immediate: true,
+        handler(val) {
+          this.errorBox = false
+          this.errorMessage = ''
+          if (this.limitedEditMode && val) {
+            this.originalCourse = JSON.parse(JSON.stringify(val))
+            const allowed = ['program_code', 'program_run', 'program_id']
+            const filteredWriteable = {}
+            allowed.forEach(key => {
+              if (key in val.writeable) filteredWriteable[key] = val.writeable[key]
+            })
+            val.writeable = filteredWriteable
+          }
         }
       }
     },
@@ -1100,6 +1123,18 @@
         this.course.platform_discipline = this.normalizeDiscipline(inputList)
       },
       saveChanges () {
+        if (this.limitedEditMode && this.originalCourse) {
+          const allowed = new Set(['program_code', 'program_run', 'program_id'])
+          const tampered = Object.keys(this.course).filter(key => {
+            if (allowed.has(key) || key === 'writeable') return false
+            return JSON.stringify(this.course[key]) !== JSON.stringify(this.originalCourse[key])
+          })
+          if (tampered.length > 0) {
+            this.errorBox = true
+            this.errorMessage = `[Permission Error] Only program_code, program_run, and program_id may be edited. Detected changes to: ${tampered.join(', ')}`
+            return
+          }
+        }
         if (!this.validate()) {
           return
         }

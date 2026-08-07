@@ -27,6 +27,7 @@
       <v-card>
         <EditForm
           :course="selected"
+          :limited-edit-mode="!write_perm.update && write_perm.kondoIt"
           @closeEdit="closeEdit"
         />
       </v-card>
@@ -147,7 +148,7 @@
               <v-container>
                 <v-row>
                   <v-col
-                    v-if="write_perm.update"
+                    v-if="write_perm.update || write_perm.kondoIt"
                     class="col-6"
                   >
                     <v-icon
