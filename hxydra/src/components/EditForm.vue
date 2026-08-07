@@ -785,6 +785,9 @@
 </template>
 <script>
   import http from '@/http'
+
+  const LIMITED_ALLOWED_FIELDS = ['program_code', 'program_run', 'program_id']
+
   export default {
     name: 'EditForm',
     props: {
@@ -793,6 +796,10 @@
         default() {
           return {}
         }
+      },
+      limitedEditMode: {
+        type: Boolean,
+        default: false
       }
     },
     data: () => ({
@@ -817,6 +824,7 @@
       marketingDatePop: false,
       quickfilledx: '',
       quickfillhbso: '',
+      originalCourse: null,
       show_messages: false,
       error_messages: [],
       db_errors: [],
@@ -1016,12 +1024,17 @@
     },
     watch: {
       quickfilledx: function(val) {
-        //course-v1:HarvardX+PH211x+1T2021
-        let normalizedID = val.replace('course-v1:', '').replace(/\+/g, '/')
-        let split_id = normalizedID.split('/')
+        // accepts bare course key (course-v1:Org+Code+Run) or a full edX URL
+        if (!val) return
+        const match = val.match(/course-v1:[^/\s]+/)
+        const courseKey = match ? match[0] : null
+        if (!courseKey) return
+        const normalizedID = courseKey.replace('course-v1:', '').replace(/\+/g, '/')
+        const split_id = normalizedID.split('/')
+        if (split_id.length < 3) return
         this.course.program_code = split_id[1]
         this.course.program_run = split_id[2]
-        this.course.program_id = val
+        this.course.program_id = courseKey
       },
       quickfillhbso: function(val) {
         try {
@@ -1030,6 +1043,21 @@
           this.course.program_id = val
         } catch(e) {
           console.log(e)
+        }
+      },
+      course: {
+        immediate: true,
+        handler(val) {
+          this.errorBox = false
+          this.errorMessage = ''
+          if (this.limitedEditMode && val && val.writeable) {
+            this.originalCourse = JSON.parse(JSON.stringify(val))
+            const filteredWriteable = {}
+            LIMITED_ALLOWED_FIELDS.forEach(key => {
+              if (key in val.writeable) filteredWriteable[key] = val.writeable[key]
+            })
+            val.writeable = filteredWriteable  // intentionally locks the parent course object to allowed fields
+          }
         }
       }
     },
@@ -1100,6 +1128,18 @@
         this.course.platform_discipline = this.normalizeDiscipline(inputList)
       },
       saveChanges () {
+        if (this.limitedEditMode && this.originalCourse) {
+          const allowed = new Set(LIMITED_ALLOWED_FIELDS)
+          const tampered = Object.keys(this.course).filter(key => {
+            if (allowed.has(key) || key === 'writeable') return false
+            return JSON.stringify(this.course[key]) !== JSON.stringify(this.originalCourse[key])
+          })
+          if (tampered.length > 0) {
+            this.errorBox = true
+            this.errorMessage = `[Permission Error] Only program_code, program_run, and program_id may be edited. Detected changes to: ${tampered.join(', ')}`
+            return
+          }
+        }
         if (!this.validate()) {
           return
         }
