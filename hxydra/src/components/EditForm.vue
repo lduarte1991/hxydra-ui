@@ -785,6 +785,9 @@
 </template>
 <script>
   import http from '@/http'
+
+  const LIMITED_ALLOWED_FIELDS = ['program_code', 'program_run', 'program_id']
+
   export default {
     name: 'EditForm',
     props: {
@@ -1022,10 +1025,13 @@
     watch: {
       quickfilledx: function(val) {
         // accepts bare course key (course-v1:Org+Code+Run) or a full edX URL
+        if (!val) return
         const match = val.match(/course-v1:[^/\s]+/)
-        const courseKey = match ? match[0] : val
-        let normalizedID = courseKey.replace('course-v1:', '').replace(/\+/g, '/')
-        let split_id = normalizedID.split('/')
+        const courseKey = match ? match[0] : null
+        if (!courseKey) return
+        const normalizedID = courseKey.replace('course-v1:', '').replace(/\+/g, '/')
+        const split_id = normalizedID.split('/')
+        if (split_id.length < 3) return
         this.course.program_code = split_id[1]
         this.course.program_run = split_id[2]
         this.course.program_id = courseKey
@@ -1044,14 +1050,13 @@
         handler(val) {
           this.errorBox = false
           this.errorMessage = ''
-          if (this.limitedEditMode && val) {
+          if (this.limitedEditMode && val && val.writeable) {
             this.originalCourse = JSON.parse(JSON.stringify(val))
-            const allowed = ['program_code', 'program_run', 'program_id']
             const filteredWriteable = {}
-            allowed.forEach(key => {
+            LIMITED_ALLOWED_FIELDS.forEach(key => {
               if (key in val.writeable) filteredWriteable[key] = val.writeable[key]
             })
-            val.writeable = filteredWriteable
+            val.writeable = filteredWriteable  // intentionally locks the parent course object to allowed fields
           }
         }
       }
@@ -1124,7 +1129,7 @@
       },
       saveChanges () {
         if (this.limitedEditMode && this.originalCourse) {
-          const allowed = new Set(['program_code', 'program_run', 'program_id'])
+          const allowed = new Set(LIMITED_ALLOWED_FIELDS)
           const tampered = Object.keys(this.course).filter(key => {
             if (allowed.has(key) || key === 'writeable') return false
             return JSON.stringify(this.course[key]) !== JSON.stringify(this.originalCourse[key])
